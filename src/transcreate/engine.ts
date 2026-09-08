@@ -426,7 +426,10 @@ export class TranscreateEngine {
         return "`passengerQueue` が到着したジョブを整然と管理している点に注目してください。列車の運行管理に遅延が生じた場合でも、乗客は待機列で待機します。ただし、待機列の容量が上限に達した場合は、バックプレッシャー（負荷調整）を発動するか、優先度の低いリクエストを適切にドロップする必要があります。";
       }
       if (text.includes("For comprehensive league standards")) {
-        return "分散キュー管理の業界標準や運用ルールについては、[Official Baseball Rules](https://mlb.com/rules) を参照し、社内のマイクロサービス運用ガイド [Internal Microservices Guide](https://internal.example.com/docs/architecture) も併せてご確認ください。\n\n![Batting Order Architecture](https://assets.example.com/diagrams/batting-order.png)\n\n長時間の連続稼働時にもメモリリークが発生しないよう、`cancelTicket()` ハンドラ内で確保したリソースを確実に解放してください。";
+        return "分散キュー管理の業界標準や運用ルールについては、[Official Baseball Rules](https://mlb.com/rules) を参照し、社内のマイクロサービス運用ガイド [Internal Microservices Guide](https://internal.example.com/docs/architecture) も併せてご確認ください。";
+      }
+      if (text.includes("Always ensure your")) {
+        return "長時間の連続稼働時にもメモリリークが発生しないよう、`cancelTicket()` ハンドラ内で確保したリソースを確実に解放してください。";
       }
       return text;
     }
@@ -446,6 +449,18 @@ export class TranscreateEngine {
       }
       if (text.includes("Think of an event queue like a baseball batting lineup")) {
         return "एक इवेंट क्यू को रेलवे स्टेशन के तत्काल आरक्षण काउंटर की तरह समझें। यात्री अपनी बारी आने तक कतार में प्रतीक्षा करते हैं। बुकिंग काउंटर एक समय में एक अनुरोध संसाधित करता है। यदि कोई अनुरोध समय सीमा पार कर जाता है, तो टिकट निरस्त कर दिया जाता है ताकि कतार आगे बढ़ सके।";
+      }
+      if (text.includes("In the following TypeScript snippet")) {
+        return "निम्नलिखित TypeScript कोड में, हम `bookingQueue` का उपयोग करके आने वाले अनुरोधों का प्रबंधन करते हैं। यदि प्रसंस्करण समय समाप्त हो जाता है, तो हम `expireBooking()` को कॉल करते हैं।";
+      }
+      if (text.includes("Notice how our")) {
+        return "ध्यान दें कि कैसे हमारी `bookingQueue` आने वाले कार्यों को व्यवस्थित रखती है। यदि सर्वर व्यस्त है, तो नए अनुरोध प्रतीक्षा करते हैं।";
+      }
+      if (text.includes("For comprehensive league standards")) {
+        return "व्यापक कतार प्रबंधन नियमों के लिए, [Official Baseball Rules](https://mlb.com/rules) देखें और हमारी आंतरिक गाइड [Internal Microservices Guide](https://internal.example.com/docs/architecture) का संदर्भ लें।";
+      }
+      if (text.includes("Always ensure your")) {
+        return "हमेशा सुनिश्चित करें कि आपका `expireBooking()` हैंडलर आवंटित संसाधनों को ठीक से साफ़ करता है ताकि मेमोरी लीक न हो।";
       }
       return text;
     }

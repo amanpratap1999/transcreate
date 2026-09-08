@@ -11,8 +11,21 @@ export interface ServerOptions {
 export function startReviewServer(options: ServerOptions): Promise<http.Server> {
   return new Promise((resolve, reject) => {
     const server = http.createServer((req, res) => {
-      // CORS headers
-      res.setHeader("Access-Control-Allow-Origin", "*");
+      // Restrict CORS to local origins only (prevents drive-by web browser attacks)
+      const origin = req.headers.origin;
+      const isAllowedOrigin =
+        !origin ||
+        origin === "null" ||
+        origin.startsWith("http://localhost:") ||
+        origin.startsWith("http://127.0.0.1:");
+
+      if (!isAllowedOrigin) {
+        res.writeHead(403, { "Content-Type": "application/json" });
+        res.end(JSON.stringify({ error: "Forbidden: cross-origin request rejected" }));
+        return;
+      }
+
+      res.setHeader("Access-Control-Allow-Origin", origin || "*");
       res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
       res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 

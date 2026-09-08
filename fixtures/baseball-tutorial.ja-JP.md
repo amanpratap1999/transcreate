@@ -91,7 +91,3 @@ export class TrainDispatchProcessor {
 ![Batting Order Architecture](https://assets.example.com/diagrams/batting-order.png)
 
 長時間の連続稼働時にもメモリリークが発生しないよう、`cancelTicket()` ハンドラ内で確保したリソースを確実に解放してください。
-
-![Batting Order Architecture](https://assets.example.com/diagrams/batting-order.png)
-
-Always ensure your `cancelTicket()` handler properly cleans up allocated resources so memory leaks don't accumulate during long games.

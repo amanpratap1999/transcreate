@@ -641,15 +641,19 @@ export class WorkstationBundler {
       const container = document.getElementById("rendered-content");
       let html = "";
 
-      // Simple rendered markdown representation
+      // Render markdown representation
       currentData.proseNodes.forEach(node => {
         const text = node.accepted ? node.localizedText : node.originalText;
+        let escaped = escapeHtml(text);
+        if (escaped.includes("\\x60")) {
+          escaped = escaped.replace(new RegExp("\\x60([^\\x60]+)\\x60", "g"), '<code style="background: var(--code-bg); padding: 2px 6px; border-radius: 4px; font-size: 12px; border: 1px solid var(--border-color);">$1</code>');
+        }
         if (text.startsWith("# ")) {
-          html += "<h1>" + escapeHtml(text.slice(2)) + "</h1>";
+          html += "<h1>" + escaped.slice(2) + "</h1>";
         } else if (text.startsWith("## ")) {
-          html += "<h2>" + escapeHtml(text.slice(3)) + "</h2>";
+          html += "<h2>" + escaped.slice(3) + "</h2>";
         } else {
-          html += "<p>" + escapeHtml(text) + "</p>";
+          html += "<p>" + escaped + "</p>";
         }
       });
 
