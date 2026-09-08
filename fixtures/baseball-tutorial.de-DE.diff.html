@@ -1,0 +1,1454 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Transcreate Review: C:\New folder\fixtures\baseball-tutorial.md (de-DE)</title>
+  <style>
+    :root {
+      --bg-base: #0f172a;
+      --bg-surface: #1e293b;
+      --bg-subtle: #334155;
+      --border-color: #334155;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent: #38bdf8;
+      --accent-hover: #0ea5e9;
+      --diff-add-bg: rgba(34, 197, 94, 0.15);
+      --diff-add-text: #4ade80;
+      --diff-del-bg: rgba(239, 68, 68, 0.15);
+      --diff-del-text: #f87171;
+      --code-bg: #090d16;
+    }
+    html.light {
+      --bg-base: #f8fafc;
+      --bg-surface: #ffffff;
+      --bg-subtle: #e2e8f0;
+      --border-color: #cbd5e1;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --accent: #0284c7;
+      --accent-hover: #0369a1;
+      --diff-add-bg: rgba(34, 197, 94, 0.12);
+      --diff-add-text: #15803d;
+      --diff-del-bg: rgba(239, 68, 68, 0.12);
+      --diff-del-text: #b91c1c;
+      --code-bg: #f1f5f9;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg-base);
+      color: var(--text-main);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    header {
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border-color);
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+      gap: 16px;
+    }
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .badge {
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      background: var(--bg-subtle);
+      color: var(--accent);
+    }
+    .badge-pill {
+      background: rgba(56, 189, 248, 0.15);
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      border-radius: 9999px;
+      padding: 2px 10px;
+      font-size: 11px;
+    }
+    .badge-valid {
+      background: rgba(34, 197, 94, 0.15);
+      border: 1px solid #22c55e;
+      color: #4ade80;
+      border-radius: 9999px;
+      padding: 2px 10px;
+      font-size: 11px;
+    }
+    .nav-tabs {
+      display: flex;
+      background: var(--bg-base);
+      border-radius: 8px;
+      padding: 3px;
+      gap: 4px;
+      border: 1px solid var(--border-color);
+    }
+    .tab-btn {
+      padding: 6px 14px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+      transition: all 0.15s ease;
+    }
+    .tab-btn.active {
+      background: var(--bg-surface);
+      color: var(--text-main);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    }
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .btn {
+      padding: 8px 14px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border: 1px solid var(--border-color);
+      background: var(--bg-surface);
+      color: var(--text-main);
+      transition: all 0.15s ease;
+    }
+    .btn:hover {
+      background: var(--bg-subtle);
+    }
+    .btn-primary {
+      background: var(--accent);
+      color: #0f172a;
+      border-color: var(--accent);
+    }
+    .btn-primary:hover {
+      background: var(--accent-hover);
+    }
+    main {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+      position: relative;
+    }
+    .view-pane {
+      display: none;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+    }
+    .view-pane.active {
+      display: flex;
+    }
+    /* Split View */
+    .split-container {
+      display: flex;
+      width: 100%;
+      height: 100%;
+    }
+    .split-col {
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px;
+      border-right: 1px solid var(--border-color);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    .split-col:last-child {
+      border-right: none;
+    }
+    .col-header {
+      position: sticky;
+      top: -24px;
+      background: var(--bg-surface);
+      padding: 10px 16px;
+      margin: -24px -24px 20px -24px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 600;
+      font-size: 13px;
+      z-index: 10;
+    }
+    /* Unified PR Diff */
+    .diff-view {
+      width: 100%;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 13px;
+      line-height: 1.5;
+      padding: 24px;
+    }
+    .diff-line {
+      display: flex;
+      padding: 2px 8px;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+    .diff-add {
+      background: var(--diff-add-bg);
+      color: var(--diff-add-text);
+    }
+    .diff-del {
+      background: var(--diff-del-bg);
+      color: var(--diff-del-text);
+    }
+    .diff-marker {
+      width: 24px;
+      user-select: none;
+      color: var(--text-muted);
+      flex-shrink: 0;
+    }
+    /* Rendered Preview */
+    .rendered-container {
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 48px 24px;
+      width: 100%;
+      line-height: 1.7;
+    }
+    .rendered-container h1 { font-size: 28px; margin-bottom: 16px; }
+    .rendered-container h2 { font-size: 20px; margin-top: 28px; margin-bottom: 12px; }
+    .rendered-container p { margin-bottom: 16px; }
+    .rendered-container pre {
+      background: var(--code-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 16px;
+      overflow-x: auto;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 13px;
+      margin-bottom: 20px;
+    }
+    /* Intent Drawer */
+    .drawer-overlay {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: 440px;
+      background: var(--bg-surface);
+      border-left: 1px solid var(--border-color);
+      box-shadow: -4px 0 24px rgba(0,0,0,0.35);
+      transform: translateX(100%);
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 50;
+      display: flex;
+      flex-direction: column;
+    }
+    .drawer-overlay.open {
+      transform: translateX(0);
+    }
+    .drawer-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .drawer-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .card-box {
+      background: var(--bg-base);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 14px;
+    }
+    .card-box h4 {
+      font-size: 12px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+      letter-spacing: 0.05em;
+    }
+    .card-box p {
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .alt-option {
+      background: var(--bg-base);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 12px;
+      margin-top: 8px;
+      cursor: pointer;
+      transition: border-color 0.15s ease;
+    }
+    .alt-option:hover {
+      border-color: var(--accent);
+    }
+    .alt-option.selected {
+      border-color: var(--accent);
+      background: rgba(56, 189, 248, 0.05);
+    }
+    .intent-tag {
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 12px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+    .section-hunk {
+      position: relative;
+      padding: 12px;
+      border: 1px solid transparent;
+      border-radius: 8px;
+      margin-bottom: 12px;
+    }
+    .section-hunk:hover {
+      border-color: var(--border-color);
+      background: rgba(255, 255, 255, 0.02);
+    }
+    .hunk-controls {
+      display: flex;
+      gap: 6px;
+      margin-top: 8px;
+    }
+    .hunk-btn {
+      padding: 4px 8px;
+      border-radius: 4px;
+      border: 1px solid var(--border-color);
+      background: var(--bg-subtle);
+      color: var(--text-main);
+      font-size: 11px;
+      cursor: pointer;
+    }
+    .hunk-btn:hover { background: var(--border-color); }
+    .status-accepted { color: #4ade80; }
+    .status-rejected { color: #f87171; text-decoration: line-through; }
+    /* Keyboard help pill */
+    .keyboard-hint {
+      position: absolute;
+      bottom: 12px;
+      left: 24px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 11px;
+      color: var(--text-muted);
+      display: flex;
+      gap: 8px;
+      z-index: 20;
+    }
+    kbd {
+      background: var(--bg-subtle);
+      padding: 1px 4px;
+      border-radius: 3px;
+      color: var(--text-main);
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-left">
+      <span class="badge">Transcreate</span>
+      <h3 style="font-size: 14px; font-weight: 600;">C:\New folder\fixtures\baseball-tutorial.md</h3>
+      <span class="badge-pill">Target: de-DE</span>
+      <span class="badge-valid">AST Valid: 100%</span>
+    </div>
+
+    <div class="nav-tabs">
+      <button class="tab-btn active" onclick="switchView('split')">Split View</button>
+      <button class="tab-btn" onclick="switchView('diff')">Unified Diff</button>
+      <button class="tab-btn" onclick="switchView('rendered')">Rendered Article</button>
+    </div>
+
+    <div class="header-right">
+      <button class="btn" onclick="toggleDrawer()" title="View Cultural Intent Cards">
+        <span>Intent Drawer (1)</span>
+      </button>
+      <button class="btn" onclick="toggleTheme()" title="Toggle Theme">
+        <span id="theme-label">Theme</span>
+      </button>
+      <button class="btn btn-primary" onclick="exportMarkdown()">
+        Export Markdown
+      </button>
+      
+    </div>
+  </header>
+
+  <main>
+    <!-- View 1: Split View -->
+    <div id="split-view" class="view-pane active">
+      <div class="split-container">
+        <!-- Original Column -->
+        <div class="split-col" id="col-original">
+          <div class="col-header">
+            <span>Original Source (en-US)</span>
+            <span style="color: var(--text-muted); font-size: 11px;">Read-only reference</span>
+          </div>
+          <div id="original-nodes"></div>
+        </div>
+
+        <!-- Localized Column -->
+        <div class="split-col" id="col-transcreated">
+          <div class="col-header">
+            <span>Transcreated (de-DE)</span>
+            <span style="color: var(--text-muted); font-size: 11px;">Section Actions</span>
+          </div>
+          <div id="transcreated-nodes"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- View 2: Unified Diff -->
+    <div id="diff-view" class="view-pane">
+      <div class="diff-view">
+        
+            <div class="diff-line ">
+              <span class="diff-marker">  </span>
+              <span>---</span>
+            </div>
+          
+            <div class="diff-line ">
+              <span class="diff-marker">  </span>
+              <span>title: "Understanding Asynchronous Event Processing"</span>
+            </div>
+          
+            <div class="diff-line ">
+              <span class="diff-marker">  </span>
+              <span>description: "A developer guide to managing event queues, backpressure, and timeouts using familiar metaphors."</span>
+            </div>
+          
+            <div class="diff-line ">
+              <span class="diff-marker">  </span>
+              <span>author: "DevRel Team"</span>
+            </div>
+          
+            <div class="diff-line ">
+              <span class="diff-marker">  </span>
+              <span>date: "2026-09-08"</span>
+            </div>
+          
+            <div class="diff-line ">
+              <span class="diff-marker">  </span>
+              <span>tags:</span>
+            </div>
+          
+            <div class="diff-line ">
+              <span class="diff-marker">  </span>
+              <span>  - architecture</span>
+            </div>
+          
+            <div class="diff-line ">
+              <span class="diff-marker">  </span>
+              <span>  - nodejs</span>
+            </div>
+          
+            <div class="diff-line ">
+              <span class="diff-marker">  </span>
+              <span>  - event-loop</span>
+            </div>
+          
+            <div class="diff-line ">
+              <span class="diff-marker">  </span>
+              <span>---</span>
+            </div>
+          
+            <div class="diff-line ">
+              <span class="diff-marker">  </span>
+              <span></span>
+            </div>
+          
+            <div class="diff-line ">
+              <span class="diff-marker">  </span>
+              <span># Mastering Asynchronous Queues</span>
+            </div>
+          
+            <div class="diff-line ">
+              <span class="diff-marker">  </span>
+              <span></span>
+            </div>
+          
+            <div class="diff-line ">
+              <span class="diff-marker">  </span>
+              <span>When building high-throughput microservices, incoming requests often arrive faster than worker threads can process them. Without proper throttling, your server crashes under heavy load.</span>
+            </div>
+          
+            <div class="diff-line ">
+              <span class="diff-marker">  </span>
+              <span></span>
+            </div>
+          
+            <div class="diff-line diff-del">
+              <span class="diff-marker">- </span>
+              <span>Think of an event queue like a baseball batting lineup. Batters wait in the dugout until it is their turn to step up to home plate. The pitcher delivers balls one at a time, and the umpire tracks strikes and balls. If a batter swings three times and misses, they strike out and return to the bench.</span>
+            </div>
+          
+            <div class="diff-line diff-add">
+              <span class="diff-marker">+ </span>
+              <span>Think of an event queue like a processing work queue. Batters wait in the buffer backlog until it is their turn to step up to home plate. The worker dispatcher delivers balls one at a time, and the umpire tracks strikes and balls. If a batter swings three times and misses, they strike out and return to the bench.</span>
+            </div>
+          
+            <div class="diff-line ">
+              <span class="diff-marker">  </span>
+              <span></span>
+            </div>
+          
+            <div class="diff-line ">
+              <span class="diff-marker">  </span>
+              <span>&lt;Callout type="info"&gt;</span>
+            </div>
+          
+            <div class="diff-line ">
+              <span class="diff-marker">  </span>
+              <span>Remember: Queues prevent your backend from being overwhelmed by spikes in network traffic.</span>
+            </div>
+          
+            <div class="diff-line ">
+              <span class="diff-marker">  </span>
+              <span>&lt;/Callout&gt;</span>
+            </div>
+          
+            <div class="diff-line ">
+              <span class="diff-marker">  </span>
+              <span></span>
+            </div>
+          
+            <div class="diff-line ">
+              <span class="diff-marker">  </span>
+              <span>## The Batting Queue Implementation</span>
+            </div>
+          
+            <div class="diff-line ">
+              <span class="diff-marker">  </span>
+              <span></span>
+            </div>
+          
+            <div class="diff-line diff-del">
+              <span class="diff-marker">- </span>
+              <span>In the following TypeScript snippet, we manage our incoming work requests using a `batterQueue`. When a new request arrives, it steps into the batter's box. If processing times out before the play finishes, we call `strikeOut()` to remove the batter and log the error.</span>
+            </div>
+          
+            <div class="diff-line diff-add">
+              <span class="diff-marker">+ </span>
+              <span>In the following TypeScript snippet, we manage our incoming work requests using a `jobQueue`. When a new request arrives, it steps into the batter's box. If processing times out before the play finishes, we call `abortJob()` to remove the batter and log the error.</span>
+            </div>
+          
+            <div class="diff-line ">
+              <span class="diff-marker">  </span>
+              <span></span>
+            </div>
+          
+            <div class="diff-line ">
+              <span class="diff-marker">  </span>
+              <span>```typescript</span>
+            </div>
+          
+            <div class="diff-line diff-del">
+              <span class="diff-marker">- </span>
+              <span>interface BatterRequest {</span>
+            </div>
+          
+            <div class="diff-line diff-del">
+              <span class="diff-marker">- </span>
+              <span>  id: string;</span>
+            </div>
+          
+            <div class="diff-line diff-del">
+              <span class="diff-marker">- </span>
+              <span>  batterName: string;</span>
+            </div>
+          
+            <div class="diff-line diff-del">
+              <span class="diff-marker">- </span>
+              <span>  swings: number;</span>
+            </div>
+          
+            <div class="diff-line diff-del">
+              <span class="diff-marker">- </span>
+              <span>  isHomeRun: boolean;</span>
+            </div>
+          
+            <div class="diff-line diff-add">
+              <span class="diff-marker">+ </span>
+              <span>interface JobRequest {</span>
+            </div>
+          
+            <div class="diff-line diff-add">
+              <span class="diff-marker">+ </span>
+              <span>  id: string;</span>
+            </div>
+          
+            <div class="diff-line diff-add">
+              <span class="diff-marker">+ </span>
+              <span>  jobName: string;</span>
+            </div>
+          
+            <div class="diff-line diff-add">
+              <span class="diff-marker">+ </span>
+              <span>  retries: number;</span>
+            </div>
+          
+            <div class="diff-line diff-add">
+              <span class="diff-marker">+ </span>
+              <span>  isSuccess: boolean;</span>
+            </div>
+          
+            <div class="diff-line diff-add">
+              <span class="diff-marker">+ </span>
+              <span>}</span>
+            </div>
+          
+            <div class="diff-line diff-add">
+              <span class="diff-marker">+ </span>
+              <span></span>
+            </div>
+          
+            <div class="diff-line diff-add">
+              <span class="diff-marker">+ </span>
+              <span>export class BatchQueueProcessor {</span>
+            </div>
+          
+            <div class="diff-line diff-add">
+              <span class="diff-marker">+ </span>
+              <span>  private jobQueue: JobRequest[] = [];</span>
+            </div>
+          
+            <div class="diff-line diff-add">
+              <span class="diff-marker">+ </span>
+              <span>  private maxRetries: number = 3;</span>
+            </div>
+          
+            <div class="diff-line diff-add">
+              <span class="diff-marker">+ </span>
+              <span>  private completedJobCount: number = 0;</span>
+            </div>
+          
+            <div class="diff-line diff-add">
+              <span class="diff-marker">+ </span>
+              <span></span>
+            </div>
+          
+            <div class="diff-line diff-add">
+              <span class="diff-marker">+ </span>
+              <span>  constructor(maxRetries = 3) {</span>
+            </div>
+          
+            <div class="diff-line diff-add">
+              <span class="diff-marker">+ </span>
+              <span>    this.maxRetries = maxRetries;</span>
+            </div>
+          
+            <div class="diff-line diff-add">
+              <span class="diff-marker">+ </span>
+              <span>  }</span>
+            </div>
+          
+            <div class="diff-line diff-add">
+              <span class="diff-marker">+ </span>
+              <span></span>
+            </div>
+          
+            <div class="diff-line diff-add">
+              <span class="diff-marker">+ </span>
+              <span>  public enqueueJob(batter: JobRequest): void {</span>
+            </div>
+          
+            <div class="diff-line diff-add">
+              <span class="diff-marker">+ </span>
+              <span>    console.log(`Batter ${batter.jobName} in Arbeitswarteschlange eingereiht.`);</span>
+            </div>
+          
+            <div class="diff-line diff-add">
+              <span class="diff-marker">+ </span>
+              <span>    this.jobQueue.push(batter);</span>
+            </div>
+          
+            <div class="diff-line diff-add">
+              <span class="diff-marker">+ </span>
+              <span>  }</span>
+            </div>
+          
+            <div class="diff-line diff-add">
+              <span class="diff-marker">+ </span>
+              <span></span>
+            </div>
+          
+            <div class="diff-line diff-add">
+              <span class="diff-marker">+ </span>
+              <span>  public processJob(batterId: string): boolean {</span>
+            </div>
+          
+            <div class="diff-line diff-add">
+              <span class="diff-marker">+ </span>
+              <span>    const currentBatter = this.jobQueue.find(b =&gt; b.id === batterId);</span>
+            </div>
+          
+            <div class="diff-line diff-add">
+              <span class="diff-marker">+ </span>
+              <span>    if (!currentBatter) {</span>
+            </div>
+          
+            <div class="diff-line diff-add">
+              <span class="diff-marker">+ </span>
+              <span>      throw new Error("Kein Auftrag in Bearbeitung.");</span>
+            </div>
+          
+            <div class="diff-line diff-add">
+              <span class="diff-marker">+ </span>
+              <span>    }</span>
+            </div>
+          
+            <div class="diff-line diff-add">
+              <span class="diff-marker">+ </span>
+              <span></span>
+            </div>
+          
+            <div class="diff-line diff-add">
+              <span class="diff-marker">+ </span>
+              <span>    currentBatter.retries += 1;</span>
+            </div>
+          
+            <div class="diff-line diff-add">
+              <span class="diff-marker">+ </span>
+              <span>    if (currentBatter.retries &gt;= this.maxRetries) {</span>
+            </div>
+          
+            <div class="diff-line diff-add">
+              <span class="diff-marker">+ </span>
+              <span>      this.abortJob(currentBatter);</span>
+            </div>
+          
+            <div class="diff-line diff-add">
+              <span class="diff-marker">+ </span>
+              <span>      return false;</span>
+            </div>
+          
+            <div class="diff-line diff-add">
+              <span class="diff-marker">+ </span>
+              <span>    }</span>
+            </div>
+          
+            <div class="diff-line diff-add">
+              <span class="diff-marker">+ </span>
+              <span></span>
+            </div>
+          
+            <div class="diff-line diff-add">
+              <span class="diff-marker">+ </span>
+              <span>    if (currentBatter.isSuccess) {</span>
+            </div>
+          
+            <div class="diff-line diff-add">
+              <span class="diff-marker">+ </span>
+              <span>      this.completedJobCount += 1;</span>
+            </div>
+          
+            <div class="diff-line diff-add">
+              <span class="diff-marker">+ </span>
+              <span>      console.log(`Erfolgreich abgeschlossen: ${this.completedJobCount}`);</span>
+            </div>
+          
+            <div class="diff-line diff-add">
+              <span class="diff-marker">+ </span>
+              <span>      this.dequeueJob(currentBatter.id);</span>
+            </div>
+          
+            <div class="diff-line diff-add">
+              <span class="diff-marker">+ </span>
+              <span>      return true;</span>
+            </div>
+          
+            <div class="diff-line diff-add">
+              <span class="diff-marker">+ </span>
+              <span>    }</span>
+            </div>
+          
+            <div class="diff-line diff-add">
+              <span class="diff-marker">+ </span>
+              <span></span>
+            </div>
+          
+            <div class="diff-line diff-add">
+              <span class="diff-marker">+ </span>
+              <span>    return false;</span>
+            </div>
+          
+            <div class="diff-line diff-add">
+              <span class="diff-marker">+ </span>
+              <span>  }</span>
+            </div>
+          
+            <div class="diff-line diff-add">
+              <span class="diff-marker">+ </span>
+              <span></span>
+            </div>
+          
+            <div class="diff-line diff-add">
+              <span class="diff-marker">+ </span>
+              <span>  private abortJob(batter: JobRequest): void {</span>
+            </div>
+          
+            <div class="diff-line diff-add">
+              <span class="diff-marker">+ </span>
+              <span>    console.warn(`Maximale Wiederholungen überschritten Batter ${batter.jobName} Auftrag abgebrochen.`);</span>
+            </div>
+          
+            <div class="diff-line diff-add">
+              <span class="diff-marker">+ </span>
+              <span>    this.dequeueJob(batter.id);</span>
+            </div>
+          
+            <div class="diff-line diff-add">
+              <span class="diff-marker">+ </span>
+              <span>  }</span>
+            </div>
+          
+            <div class="diff-line diff-add">
+              <span class="diff-marker">+ </span>
+              <span></span>
+            </div>
+          
+            <div class="diff-line diff-add">
+              <span class="diff-marker">+ </span>
+              <span>  private dequeueJob(id: string): void {</span>
+            </div>
+          
+            <div class="diff-line diff-add">
+              <span class="diff-marker">+ </span>
+              <span>    this.jobQueue = this.jobQueue.filter(b =&gt; b.id !== id);</span>
+            </div>
+          
+            <div class="diff-line diff-add">
+              <span class="diff-marker">+ </span>
+              <span>  }</span>
+            </div>
+          
+            <div class="diff-line diff-add">
+              <span class="diff-marker">+ </span>
+              <span></span>
+            </div>
+          
+            <div class="diff-line diff-add">
+              <span class="diff-marker">+ </span>
+              <span>  public getLineupSize(): number {</span>
+            </div>
+          
+            <div class="diff-line diff-add">
+              <span class="diff-marker">+ </span>
+              <span>    return this.jobQueue.length;</span>
+            </div>
+          
+            <div class="diff-line diff-add">
+              <span class="diff-marker">+ </span>
+              <span>  }</span>
+            </div>
+          
+            <div class="diff-line ">
+              <span class="diff-marker">  </span>
+              <span>}</span>
+            </div>
+          
+            <div class="diff-line diff-del">
+              <span class="diff-marker">- </span>
+              <span></span>
+            </div>
+          
+            <div class="diff-line diff-del">
+              <span class="diff-marker">- </span>
+              <span>export class BattingLineupProcessor {</span>
+            </div>
+          
+            <div class="diff-line diff-del">
+              <span class="diff-marker">- </span>
+              <span>  private batterQueue: BatterRequest[] = [];</span>
+            </div>
+          
+            <div class="diff-line diff-del">
+              <span class="diff-marker">- </span>
+              <span>  private maxStrikes: number = 3;</span>
+            </div>
+          
+            <div class="diff-line diff-del">
+              <span class="diff-marker">- </span>
+              <span>  private homeRunCount: number = 0;</span>
+            </div>
+          
+            <div class="diff-line diff-del">
+              <span class="diff-marker">- </span>
+              <span></span>
+            </div>
+          
+            <div class="diff-line diff-del">
+              <span class="diff-marker">- </span>
+              <span>  constructor(maxStrikes = 3) {</span>
+            </div>
+          
+            <div class="diff-line diff-del">
+              <span class="diff-marker">- </span>
+              <span>    this.maxStrikes = maxStrikes;</span>
+            </div>
+          
+            <div class="diff-line diff-del">
+              <span class="diff-marker">- </span>
+              <span>  }</span>
+            </div>
+          
+            <div class="diff-line diff-del">
+              <span class="diff-marker">- </span>
+              <span></span>
+            </div>
+          
+            <div class="diff-line diff-del">
+              <span class="diff-marker">- </span>
+              <span>  public stepUpToPlate(batter: BatterRequest): void {</span>
+            </div>
+          
+            <div class="diff-line diff-del">
+              <span class="diff-marker">- </span>
+              <span>    console.log(`Batter ${batter.batterName} steps up to home plate.`);</span>
+            </div>
+          
+            <div class="diff-line diff-del">
+              <span class="diff-marker">- </span>
+              <span>    this.batterQueue.push(batter);</span>
+            </div>
+          
+            <div class="diff-line diff-del">
+              <span class="diff-marker">- </span>
+              <span>  }</span>
+            </div>
+          
+            <div class="diff-line diff-del">
+              <span class="diff-marker">- </span>
+              <span></span>
+            </div>
+          
+            <div class="diff-line diff-del">
+              <span class="diff-marker">- </span>
+              <span>  public pitchBall(batterId: string): boolean {</span>
+            </div>
+          
+            <div class="diff-line diff-del">
+              <span class="diff-marker">- </span>
+              <span>    const currentBatter = this.batterQueue.find(b =&gt; b.id === batterId);</span>
+            </div>
+          
+            <div class="diff-line diff-del">
+              <span class="diff-marker">- </span>
+              <span>    if (!currentBatter) {</span>
+            </div>
+          
+            <div class="diff-line diff-del">
+              <span class="diff-marker">- </span>
+              <span>      throw new Error("No batter currently in the batter's box.");</span>
+            </div>
+          
+            <div class="diff-line diff-del">
+              <span class="diff-marker">- </span>
+              <span>    }</span>
+            </div>
+          
+            <div class="diff-line diff-del">
+              <span class="diff-marker">- </span>
+              <span></span>
+            </div>
+          
+            <div class="diff-line diff-del">
+              <span class="diff-marker">- </span>
+              <span>    currentBatter.swings += 1;</span>
+            </div>
+          
+            <div class="diff-line diff-del">
+              <span class="diff-marker">- </span>
+              <span>    if (currentBatter.swings &gt;= this.maxStrikes) {</span>
+            </div>
+          
+            <div class="diff-line diff-del">
+              <span class="diff-marker">- </span>
+              <span>      this.strikeOut(currentBatter);</span>
+            </div>
+          
+            <div class="diff-line diff-del">
+              <span class="diff-marker">- </span>
+              <span>      return false;</span>
+            </div>
+          
+            <div class="diff-line diff-del">
+              <span class="diff-marker">- </span>
+              <span>    }</span>
+            </div>
+          
+            <div class="diff-line diff-del">
+              <span class="diff-marker">- </span>
+              <span></span>
+            </div>
+          
+            <div class="diff-line diff-del">
+              <span class="diff-marker">- </span>
+              <span>    if (currentBatter.isHomeRun) {</span>
+            </div>
+          
+            <div class="diff-line diff-del">
+              <span class="diff-marker">- </span>
+              <span>      this.homeRunCount += 1;</span>
+            </div>
+          
+            <div class="diff-line diff-del">
+              <span class="diff-marker">- </span>
+              <span>      console.log(`Home run! Total home runs: ${this.homeRunCount}`);</span>
+            </div>
+          
+            <div class="diff-line diff-del">
+              <span class="diff-marker">- </span>
+              <span>      this.retireBatter(currentBatter.id);</span>
+            </div>
+          
+            <div class="diff-line diff-del">
+              <span class="diff-marker">- </span>
+              <span>      return true;</span>
+            </div>
+          
+            <div class="diff-line diff-del">
+              <span class="diff-marker">- </span>
+              <span>    }</span>
+            </div>
+          
+            <div class="diff-line diff-del">
+              <span class="diff-marker">- </span>
+              <span></span>
+            </div>
+          
+            <div class="diff-line diff-del">
+              <span class="diff-marker">- </span>
+              <span>    return false;</span>
+            </div>
+          
+            <div class="diff-line diff-del">
+              <span class="diff-marker">- </span>
+              <span>  }</span>
+            </div>
+          
+            <div class="diff-line diff-del">
+              <span class="diff-marker">- </span>
+              <span></span>
+            </div>
+          
+            <div class="diff-line diff-del">
+              <span class="diff-marker">- </span>
+              <span>  private strikeOut(batter: BatterRequest): void {</span>
+            </div>
+          
+            <div class="diff-line diff-del">
+              <span class="diff-marker">- </span>
+              <span>    console.warn(`Three strikes! Batter ${batter.batterName} struck out.`);</span>
+            </div>
+          
+            <div class="diff-line diff-del">
+              <span class="diff-marker">- </span>
+              <span>    this.retireBatter(batter.id);</span>
+            </div>
+          
+            <div class="diff-line diff-del">
+              <span class="diff-marker">- </span>
+              <span>  }</span>
+            </div>
+          
+            <div class="diff-line diff-del">
+              <span class="diff-marker">- </span>
+              <span></span>
+            </div>
+          
+            <div class="diff-line diff-del">
+              <span class="diff-marker">- </span>
+              <span>  private retireBatter(id: string): void {</span>
+            </div>
+          
+            <div class="diff-line diff-del">
+              <span class="diff-marker">- </span>
+              <span>    this.batterQueue = this.batterQueue.filter(b =&gt; b.id !== id);</span>
+            </div>
+          
+            <div class="diff-line diff-del">
+              <span class="diff-marker">- </span>
+              <span>  }</span>
+            </div>
+          
+            <div class="diff-line diff-del">
+              <span class="diff-marker">- </span>
+              <span></span>
+            </div>
+          
+            <div class="diff-line diff-del">
+              <span class="diff-marker">- </span>
+              <span>  public getLineupSize(): number {</span>
+            </div>
+          
+            <div class="diff-line diff-del">
+              <span class="diff-marker">- </span>
+              <span>    return this.batterQueue.length;</span>
+            </div>
+          
+            <div class="diff-line diff-del">
+              <span class="diff-marker">- </span>
+              <span>  }</span>
+            </div>
+          
+            <div class="diff-line diff-del">
+              <span class="diff-marker">- </span>
+              <span>}</span>
+            </div>
+          
+            <div class="diff-line ">
+              <span class="diff-marker">  </span>
+              <span>```</span>
+            </div>
+          
+            <div class="diff-line ">
+              <span class="diff-marker">  </span>
+              <span></span>
+            </div>
+          
+            <div class="diff-line ">
+              <span class="diff-marker">  </span>
+              <span>## Managing Dugout Congestion</span>
+            </div>
+          
+            <div class="diff-line ">
+              <span class="diff-marker">  </span>
+              <span></span>
+            </div>
+          
+            <div class="diff-line diff-del">
+              <span class="diff-marker">- </span>
+              <span>Notice how our `batterQueue` keeps incoming jobs orderly. If the pitcher is delayed, new batters remain patiently in the dugout. However, if the bullpen fills up completely, we must apply backpressure or drop low-priority requests.</span>
+            </div>
+          
+            <div class="diff-line diff-add">
+              <span class="diff-marker">+ </span>
+              <span>Notice how our `jobQueue` keeps incoming jobs orderly. If the worker dispatcher is delayed, new work items remain patiently in the buffer backlog. However, if the bullpen fills up completely, we must apply backpressure or drop low-priority requests.</span>
+            </div>
+          
+            <div class="diff-line ">
+              <span class="diff-marker">  </span>
+              <span></span>
+            </div>
+          
+            <div class="diff-line ">
+              <span class="diff-marker">  </span>
+              <span>For comprehensive league standards and queue management rules, refer to the [Official Baseball Rules](https://mlb.com/rules) and consult our system architecture docs at [Internal Microservices Guide](https://internal.example.com/docs/architecture).</span>
+            </div>
+          
+            <div class="diff-line ">
+              <span class="diff-marker">  </span>
+              <span></span>
+            </div>
+          
+            <div class="diff-line ">
+              <span class="diff-marker">  </span>
+              <span>![Batting Order Architecture](https://assets.example.com/diagrams/batting-order.png)</span>
+            </div>
+          
+            <div class="diff-line ">
+              <span class="diff-marker">  </span>
+              <span></span>
+            </div>
+          
+            <div class="diff-line diff-del">
+              <span class="diff-marker">- </span>
+              <span>Always ensure your `strikeOut()` handler properly cleans up allocated resources so memory leaks don't accumulate during long games.</span>
+            </div>
+          
+            <div class="diff-line diff-add">
+              <span class="diff-marker">+ </span>
+              <span>Always ensure your `abortJob()` handler properly cleans up allocated resources so memory leaks don't accumulate during long games.</span>
+            </div>
+          
+      </div>
+    </div>
+
+    <!-- View 3: Rendered Preview -->
+    <div id="rendered-view" class="view-pane">
+      <div class="rendered-container" id="rendered-content">
+        <!-- Injected dynamically based on accepted state -->
+      </div>
+    </div>
+
+    <!-- Side Intent Drawer -->
+    <div class="drawer-overlay" id="intent-drawer">
+      <div class="drawer-header">
+        <h3 style="font-size: 14px; font-weight: 600;">Cultural Intent Card</h3>
+        <button class="btn" onclick="toggleDrawer()" style="padding: 2px 8px;">✕</button>
+      </div>
+      <div class="drawer-body" id="drawer-content">
+        <!-- Populated via JS -->
+      </div>
+    </div>
+
+    <div class="keyboard-hint">
+      <span><kbd>j</kbd>/<kbd>k</kbd> Next/Prev Hunk</span>
+      <span><kbd>a</kbd> Accept</span>
+      <span><kbd>r</kbd> Reject</span>
+      <span><kbd>Space</kbd> Intent Drawer</span>
+    </div>
+  </main>
+
+  <script>
+    const INITIAL_DATA = {"filePath":"C:\\New folder\\fixtures\\baseball-tutorial.md","targetLocale":"de-DE","originalMarkdown":"---\ntitle: \"Understanding Asynchronous Event Processing\"\ndescription: \"A developer guide to managing event queues, backpressure, and timeouts using familiar metaphors.\"\nauthor: \"DevRel Team\"\ndate: \"2026-09-08\"\ntags:\n  - architecture\n  - nodejs\n  - event-loop\n---\n\n# Mastering Asynchronous Queues\n\nWhen building high-throughput microservices, incoming requests often arrive faster than worker threads can process them. Without proper throttling, your server crashes under heavy load.\n\nThink of an event queue like a baseball batting lineup. Batters wait in the dugout until it is their turn to step up to home plate. The pitcher delivers balls one at a time, and the umpire tracks strikes and balls. If a batter swings three times and misses, they strike out and return to the bench.\n\n<Callout type=\"info\">\nRemember: Queues prevent your backend from being overwhelmed by spikes in network traffic.\n</Callout>\n\n## The Batting Queue Implementation\n\nIn the following TypeScript snippet, we manage our incoming work requests using a `batterQueue`. When a new request arrives, it steps into the batter's box. If processing times out before the play finishes, we call `strikeOut()` to remove the batter and log the error.\n\n```typescript\ninterface BatterRequest {\n  id: string;\n  batterName: string;\n  swings: number;\n  isHomeRun: boolean;\n}\n\nexport class BattingLineupProcessor {\n  private batterQueue: BatterRequest[] = [];\n  private maxStrikes: number = 3;\n  private homeRunCount: number = 0;\n\n  constructor(maxStrikes = 3) {\n    this.maxStrikes = maxStrikes;\n  }\n\n  public stepUpToPlate(batter: BatterRequest): void {\n    console.log(`Batter ${batter.batterName} steps up to home plate.`);\n    this.batterQueue.push(batter);\n  }\n\n  public pitchBall(batterId: string): boolean {\n    const currentBatter = this.batterQueue.find(b => b.id === batterId);\n    if (!currentBatter) {\n      throw new Error(\"No batter currently in the batter's box.\");\n    }\n\n    currentBatter.swings += 1;\n    if (currentBatter.swings >= this.maxStrikes) {\n      this.strikeOut(currentBatter);\n      return false;\n    }\n\n    if (currentBatter.isHomeRun) {\n      this.homeRunCount += 1;\n      console.log(`Home run! Total home runs: ${this.homeRunCount}`);\n      this.retireBatter(currentBatter.id);\n      return true;\n    }\n\n    return false;\n  }\n\n  private strikeOut(batter: BatterRequest): void {\n    console.warn(`Three strikes! Batter ${batter.batterName} struck out.`);\n    this.retireBatter(batter.id);\n  }\n\n  private retireBatter(id: string): void {\n    this.batterQueue = this.batterQueue.filter(b => b.id !== id);\n  }\n\n  public getLineupSize(): number {\n    return this.batterQueue.length;\n  }\n}\n```\n\n## Managing Dugout Congestion\n\nNotice how our `batterQueue` keeps incoming jobs orderly. If the pitcher is delayed, new batters remain patiently in the dugout. However, if the bullpen fills up completely, we must apply backpressure or drop low-priority requests.\n\nFor comprehensive league standards and queue management rules, refer to the [Official Baseball Rules](https://mlb.com/rules) and consult our system architecture docs at [Internal Microservices Guide](https://internal.example.com/docs/architecture).\n\n![Batting Order Architecture](https://assets.example.com/diagrams/batting-order.png)\n\nAlways ensure your `strikeOut()` handler properly cleans up allocated resources so memory leaks don't accumulate during long games.\n","transcreatedMarkdown":"---\ntitle: \"Understanding Asynchronous Event Processing\"\ndescription: \"A developer guide to managing event queues, backpressure, and timeouts using familiar metaphors.\"\nauthor: \"DevRel Team\"\ndate: \"2026-09-08\"\ntags:\n  - architecture\n  - nodejs\n  - event-loop\n---\n\n# Mastering Asynchronous Queues\n\nWhen building high-throughput microservices, incoming requests often arrive faster than worker threads can process them. Without proper throttling, your server crashes under heavy load.\n\nThink of an event queue like a processing work queue. Batters wait in the buffer backlog until it is their turn to step up to home plate. The worker dispatcher delivers balls one at a time, and the umpire tracks strikes and balls. If a batter swings three times and misses, they strike out and return to the bench.\n\n<Callout type=\"info\">\nRemember: Queues prevent your backend from being overwhelmed by spikes in network traffic.\n</Callout>\n\n## The Batting Queue Implementation\n\nIn the following TypeScript snippet, we manage our incoming work requests using a `jobQueue`. When a new request arrives, it steps into the batter's box. If processing times out before the play finishes, we call `abortJob()` to remove the batter and log the error.\n\n```typescript\ninterface JobRequest {\r\n  id: string;\r\n  jobName: string;\r\n  retries: number;\r\n  isSuccess: boolean;\r\n}\r\n\r\nexport class BatchQueueProcessor {\r\n  private jobQueue: JobRequest[] = [];\r\n  private maxRetries: number = 3;\r\n  private completedJobCount: number = 0;\r\n\r\n  constructor(maxRetries = 3) {\r\n    this.maxRetries = maxRetries;\r\n  }\r\n\r\n  public enqueueJob(batter: JobRequest): void {\r\n    console.log(`Batter ${batter.jobName} in Arbeitswarteschlange eingereiht.`);\r\n    this.jobQueue.push(batter);\r\n  }\r\n\r\n  public processJob(batterId: string): boolean {\r\n    const currentBatter = this.jobQueue.find(b => b.id === batterId);\r\n    if (!currentBatter) {\r\n      throw new Error(\"Kein Auftrag in Bearbeitung.\");\r\n    }\r\n\r\n    currentBatter.retries += 1;\r\n    if (currentBatter.retries >= this.maxRetries) {\r\n      this.abortJob(currentBatter);\r\n      return false;\r\n    }\r\n\r\n    if (currentBatter.isSuccess) {\r\n      this.completedJobCount += 1;\r\n      console.log(`Erfolgreich abgeschlossen: ${this.completedJobCount}`);\r\n      this.dequeueJob(currentBatter.id);\r\n      return true;\r\n    }\r\n\r\n    return false;\r\n  }\r\n\r\n  private abortJob(batter: JobRequest): void {\r\n    console.warn(`Maximale Wiederholungen überschritten Batter ${batter.jobName} Auftrag abgebrochen.`);\r\n    this.dequeueJob(batter.id);\r\n  }\r\n\r\n  private dequeueJob(id: string): void {\r\n    this.jobQueue = this.jobQueue.filter(b => b.id !== id);\r\n  }\r\n\r\n  public getLineupSize(): number {\r\n    return this.jobQueue.length;\r\n  }\r\n}\n```\n\n## Managing Dugout Congestion\n\nNotice how our `jobQueue` keeps incoming jobs orderly. If the worker dispatcher is delayed, new work items remain patiently in the buffer backlog. However, if the bullpen fills up completely, we must apply backpressure or drop low-priority requests.\n\nFor comprehensive league standards and queue management rules, refer to the [Official Baseball Rules](https://mlb.com/rules) and consult our system architecture docs at [Internal Microservices Guide](https://internal.example.com/docs/architecture).\n\n![Batting Order Architecture](https://assets.example.com/diagrams/batting-order.png)\n\nAlways ensure your `abortJob()` handler properly cleans up allocated resources so memory leaks don't accumulate during long games.\n","intentCards":[{"id":"intent-primary-1","sectionIndex":0,"codeBlockIndex":0,"associatedSymbols":["BattingLineupProcessor","BatterRequest","batterQueue","batterName","stepUpToPlate","pitchBall","strikeOut","retireBatter","homeRunCount","maxStrikes","swings","isHomeRun"],"originalMetaphor":"Baseball batting lineup","targetMetaphor":"Automated Parcel Sorting & Conveyor Dispatch","mismatchReason":"Baseball-specific terminology creates unnecessary cognitive overhead in European tech communities where logistical conveyor or service queue metaphors are standard.","rationale":"Replaced sport-specific terminology with an industrial automated dispatch system.","culturalContext":"European developer literature favors industrial automation and logistics metaphors for throughput and backpressure.","confidence":0.94,"alternatives":[{"id":"alt-1","metaphor":"Automated Parcel Sorting & Conveyor Dispatch","rationale":"Replaced sport-specific terminology with an industrial automated dispatch system.","suggestedText":"Culturally adapted version using regional queuing mental model.","isNeutralTechnical":false},{"id":"alt-neutral","metaphor":"Neutral Technical (Zero-Metaphor Direct Explanation)","rationale":"Engineers who prefer direct, idiom-free technical explanations without sporting or cultural analogies.","suggestedText":"FIFO Asynchronous Work Queue with backpressure buffer, exponential timeout eviction, and worker throughput tracking.","isNeutralTechnical":true}]}],"symbolTable":{"BattingLineupProcessor":"BatchQueueProcessor","BatterRequest":"JobRequest","batterQueue":"jobQueue","batterName":"jobName","stepUpToPlate":"enqueueJob","pitchBall":"processJob","strikeOut":"abortJob","retireBatter":"dequeueJob","homeRunCount":"completedJobCount","maxStrikes":"maxRetries","swings":"retries","isHomeRun":"isSuccess"},"codeBlocks":[{"index":0,"lang":"typescript","startOffset":1216,"endOffset":2680,"originalCode":"interface BatterRequest {\n  id: string;\n  batterName: string;\n  swings: number;\n  isHomeRun: boolean;\n}\n\nexport class BattingLineupProcessor {\n  private batterQueue: BatterRequest[] = [];\n  private maxStrikes: number = 3;\n  private homeRunCount: number = 0;\n\n  constructor(maxStrikes = 3) {\n    this.maxStrikes = maxStrikes;\n  }\n\n  public stepUpToPlate(batter: BatterRequest): void {\n    console.log(`Batter ${batter.batterName} steps up to home plate.`);\n    this.batterQueue.push(batter);\n  }\n\n  public pitchBall(batterId: string): boolean {\n    const currentBatter = this.batterQueue.find(b => b.id === batterId);\n    if (!currentBatter) {\n      throw new Error(\"No batter currently in the batter's box.\");\n    }\n\n    currentBatter.swings += 1;\n    if (currentBatter.swings >= this.maxStrikes) {\n      this.strikeOut(currentBatter);\n      return false;\n    }\n\n    if (currentBatter.isHomeRun) {\n      this.homeRunCount += 1;\n      console.log(`Home run! Total home runs: ${this.homeRunCount}`);\n      this.retireBatter(currentBatter.id);\n      return true;\n    }\n\n    return false;\n  }\n\n  private strikeOut(batter: BatterRequest): void {\n    console.warn(`Three strikes! Batter ${batter.batterName} struck out.`);\n    this.retireBatter(batter.id);\n  }\n\n  private retireBatter(id: string): void {\n    this.batterQueue = this.batterQueue.filter(b => b.id !== id);\n  }\n\n  public getLineupSize(): number {\n    return this.batterQueue.length;\n  }\n}","candidateSymbols":[{"name":"BatterRequest","kind":"type","line":1,"contextSnippet":"interface BatterRequest"},{"name":"BattingLineupProcessor","kind":"class","line":1,"contextSnippet":"class BattingLineupProcessor"},{"name":"batterQueue","kind":"variable","line":9,"contextSnippet":"batterQueue"},{"name":"maxStrikes","kind":"variable","line":10,"contextSnippet":"maxStrikes"},{"name":"homeRunCount","kind":"variable","line":11,"contextSnippet":"homeRunCount"},{"name":"stepUpToPlate","kind":"function","line":17,"contextSnippet":"stepUpToPlate()"},{"name":"pitchBall","kind":"function","line":22,"contextSnippet":"pitchBall()"},{"name":"currentBatter","kind":"variable","line":23,"contextSnippet":"currentBatter"},{"name":"strikeOut","kind":"function","line":44,"contextSnippet":"strikeOut()"},{"name":"retireBatter","kind":"function","line":49,"contextSnippet":"retireBatter()"},{"name":"getLineupSize","kind":"function","line":53,"contextSnippet":"getLineupSize()"}],"associatedSectionIndices":[5,7,10],"transformedCode":"interface JobRequest {\r\n  id: string;\r\n  jobName: string;\r\n  retries: number;\r\n  isSuccess: boolean;\r\n}\r\n\r\nexport class BatchQueueProcessor {\r\n  private jobQueue: JobRequest[] = [];\r\n  private maxRetries: number = 3;\r\n  private completedJobCount: number = 0;\r\n\r\n  constructor(maxRetries = 3) {\r\n    this.maxRetries = maxRetries;\r\n  }\r\n\r\n  public enqueueJob(batter: JobRequest): void {\r\n    console.log(`Batter ${batter.jobName} in Arbeitswarteschlange eingereiht.`);\r\n    this.jobQueue.push(batter);\r\n  }\r\n\r\n  public processJob(batterId: string): boolean {\r\n    const currentBatter = this.jobQueue.find(b => b.id === batterId);\r\n    if (!currentBatter) {\r\n      throw new Error(\"Kein Auftrag in Bearbeitung.\");\r\n    }\r\n\r\n    currentBatter.retries += 1;\r\n    if (currentBatter.retries >= this.maxRetries) {\r\n      this.abortJob(currentBatter);\r\n      return false;\r\n    }\r\n\r\n    if (currentBatter.isSuccess) {\r\n      this.completedJobCount += 1;\r\n      console.log(`Erfolgreich abgeschlossen: ${this.completedJobCount}`);\r\n      this.dequeueJob(currentBatter.id);\r\n      return true;\r\n    }\r\n\r\n    return false;\r\n  }\r\n\r\n  private abortJob(batter: JobRequest): void {\r\n    console.warn(`Maximale Wiederholungen überschritten Batter ${batter.jobName} Auftrag abgebrochen.`);\r\n    this.dequeueJob(batter.id);\r\n  }\r\n\r\n  private dequeueJob(id: string): void {\r\n    this.jobQueue = this.jobQueue.filter(b => b.id !== id);\r\n  }\r\n\r\n  public getLineupSize(): number {\r\n    return this.jobQueue.length;\r\n  }\r\n}","syntaxValid":true,"flaggedForHumanReview":false}],"proseNodes":[{"index":0,"type":"heading","startOffset":264,"endOffset":295,"originalText":"# Mastering Asynchronous Queues","maskedText":"# Mastering Asynchronous Queues","urlMap":{},"inlineCodeTokens":[],"intentCard":{"id":"intent-primary-1","sectionIndex":0,"codeBlockIndex":0,"associatedSymbols":["BattingLineupProcessor","BatterRequest","batterQueue","batterName","stepUpToPlate","pitchBall","strikeOut","retireBatter","homeRunCount","maxStrikes","swings","isHomeRun"],"originalMetaphor":"Baseball batting lineup","targetMetaphor":"Automated Parcel Sorting & Conveyor Dispatch","mismatchReason":"Baseball-specific terminology creates unnecessary cognitive overhead in European tech communities where logistical conveyor or service queue metaphors are standard.","rationale":"Replaced sport-specific terminology with an industrial automated dispatch system.","culturalContext":"European developer literature favors industrial automation and logistics metaphors for throughput and backpressure.","confidence":0.94,"alternatives":[{"id":"alt-1","metaphor":"Automated Parcel Sorting & Conveyor Dispatch","rationale":"Replaced sport-specific terminology with an industrial automated dispatch system.","suggestedText":"Culturally adapted version using regional queuing mental model.","isNeutralTechnical":false},{"id":"alt-neutral","metaphor":"Neutral Technical (Zero-Metaphor Direct Explanation)","rationale":"Engineers who prefer direct, idiom-free technical explanations without sporting or cultural analogies.","suggestedText":"FIFO Asynchronous Work Queue with backpressure buffer, exponential timeout eviction, and worker throughput tracking.","isNeutralTechnical":true}]},"localizedText":"# Mastering Asynchronous Queues","accepted":true},{"index":1,"type":"paragraph","startOffset":297,"endOffset":482,"originalText":"When building high-throughput microservices, incoming requests often arrive faster than worker threads can process them. Without proper throttling, your server crashes under heavy load.","maskedText":"When building high-throughput microservices, incoming requests often arrive faster than worker threads can process them. Without proper throttling, your server crashes under heavy load.","urlMap":{},"inlineCodeTokens":[],"intentCard":{"id":"intent-primary-1","sectionIndex":0,"codeBlockIndex":0,"associatedSymbols":["BattingLineupProcessor","BatterRequest","batterQueue","batterName","stepUpToPlate","pitchBall","strikeOut","retireBatter","homeRunCount","maxStrikes","swings","isHomeRun"],"originalMetaphor":"Baseball batting lineup","targetMetaphor":"Automated Parcel Sorting & Conveyor Dispatch","mismatchReason":"Baseball-specific terminology creates unnecessary cognitive overhead in European tech communities where logistical conveyor or service queue metaphors are standard.","rationale":"Replaced sport-specific terminology with an industrial automated dispatch system.","culturalContext":"European developer literature favors industrial automation and logistics metaphors for throughput and backpressure.","confidence":0.94,"alternatives":[{"id":"alt-1","metaphor":"Automated Parcel Sorting & Conveyor Dispatch","rationale":"Replaced sport-specific terminology with an industrial automated dispatch system.","suggestedText":"Culturally adapted version using regional queuing mental model.","isNeutralTechnical":false},{"id":"alt-neutral","metaphor":"Neutral Technical (Zero-Metaphor Direct Explanation)","rationale":"Engineers who prefer direct, idiom-free technical explanations without sporting or cultural analogies.","suggestedText":"FIFO Asynchronous Work Queue with backpressure buffer, exponential timeout eviction, and worker throughput tracking.","isNeutralTechnical":true}]},"localizedText":"When building high-throughput microservices, incoming requests often arrive faster than worker threads can process them. Without proper throttling, your server crashes under heavy load.","accepted":true},{"index":2,"type":"paragraph","startOffset":484,"endOffset":782,"originalText":"Think of an event queue like a baseball batting lineup. Batters wait in the dugout until it is their turn to step up to home plate. The pitcher delivers balls one at a time, and the umpire tracks strikes and balls. If a batter swings three times and misses, they strike out and return to the bench.","maskedText":"Think of an event queue like a baseball batting lineup. Batters wait in the dugout until it is their turn to step up to home plate. The pitcher delivers balls one at a time, and the umpire tracks strikes and balls. If a batter swings three times and misses, they strike out and return to the bench.","urlMap":{},"inlineCodeTokens":[],"intentCard":{"id":"intent-primary-1","sectionIndex":0,"codeBlockIndex":0,"associatedSymbols":["BattingLineupProcessor","BatterRequest","batterQueue","batterName","stepUpToPlate","pitchBall","strikeOut","retireBatter","homeRunCount","maxStrikes","swings","isHomeRun"],"originalMetaphor":"Baseball batting lineup","targetMetaphor":"Automated Parcel Sorting & Conveyor Dispatch","mismatchReason":"Baseball-specific terminology creates unnecessary cognitive overhead in European tech communities where logistical conveyor or service queue metaphors are standard.","rationale":"Replaced sport-specific terminology with an industrial automated dispatch system.","culturalContext":"European developer literature favors industrial automation and logistics metaphors for throughput and backpressure.","confidence":0.94,"alternatives":[{"id":"alt-1","metaphor":"Automated Parcel Sorting & Conveyor Dispatch","rationale":"Replaced sport-specific terminology with an industrial automated dispatch system.","suggestedText":"Culturally adapted version using regional queuing mental model.","isNeutralTechnical":false},{"id":"alt-neutral","metaphor":"Neutral Technical (Zero-Metaphor Direct Explanation)","rationale":"Engineers who prefer direct, idiom-free technical explanations without sporting or cultural analogies.","suggestedText":"FIFO Asynchronous Work Queue with backpressure buffer, exponential timeout eviction, and worker throughput tracking.","isNeutralTechnical":true}]},"localizedText":"Think of an event queue like a processing work queue. Batters wait in the buffer backlog until it is their turn to step up to home plate. The worker dispatcher delivers balls one at a time, and the umpire tracks strikes and balls. If a batter swings three times and misses, they strike out and return to the bench.","accepted":true},{"index":3,"type":"paragraph","startOffset":806,"endOffset":896,"originalText":"Remember: Queues prevent your backend from being overwhelmed by spikes in network traffic.","maskedText":"Remember: Queues prevent your backend from being overwhelmed by spikes in network traffic.","urlMap":{},"inlineCodeTokens":[],"intentCard":{"id":"intent-primary-1","sectionIndex":0,"codeBlockIndex":0,"associatedSymbols":["BattingLineupProcessor","BatterRequest","batterQueue","batterName","stepUpToPlate","pitchBall","strikeOut","retireBatter","homeRunCount","maxStrikes","swings","isHomeRun"],"originalMetaphor":"Baseball batting lineup","targetMetaphor":"Automated Parcel Sorting & Conveyor Dispatch","mismatchReason":"Baseball-specific terminology creates unnecessary cognitive overhead in European tech communities where logistical conveyor or service queue metaphors are standard.","rationale":"Replaced sport-specific terminology with an industrial automated dispatch system.","culturalContext":"European developer literature favors industrial automation and logistics metaphors for throughput and backpressure.","confidence":0.94,"alternatives":[{"id":"alt-1","metaphor":"Automated Parcel Sorting & Conveyor Dispatch","rationale":"Replaced sport-specific terminology with an industrial automated dispatch system.","suggestedText":"Culturally adapted version using regional queuing mental model.","isNeutralTechnical":false},{"id":"alt-neutral","metaphor":"Neutral Technical (Zero-Metaphor Direct Explanation)","rationale":"Engineers who prefer direct, idiom-free technical explanations without sporting or cultural analogies.","suggestedText":"FIFO Asynchronous Work Queue with backpressure buffer, exponential timeout eviction, and worker throughput tracking.","isNeutralTechnical":true}]},"localizedText":"Remember: Queues prevent your backend from being overwhelmed by spikes in network traffic.","accepted":true},{"index":4,"type":"heading","startOffset":909,"endOffset":944,"originalText":"## The Batting Queue Implementation","maskedText":"## The Batting Queue Implementation","urlMap":{},"inlineCodeTokens":[],"intentCard":{"id":"intent-primary-1","sectionIndex":0,"codeBlockIndex":0,"associatedSymbols":["BattingLineupProcessor","BatterRequest","batterQueue","batterName","stepUpToPlate","pitchBall","strikeOut","retireBatter","homeRunCount","maxStrikes","swings","isHomeRun"],"originalMetaphor":"Baseball batting lineup","targetMetaphor":"Automated Parcel Sorting & Conveyor Dispatch","mismatchReason":"Baseball-specific terminology creates unnecessary cognitive overhead in European tech communities where logistical conveyor or service queue metaphors are standard.","rationale":"Replaced sport-specific terminology with an industrial automated dispatch system.","culturalContext":"European developer literature favors industrial automation and logistics metaphors for throughput and backpressure.","confidence":0.94,"alternatives":[{"id":"alt-1","metaphor":"Automated Parcel Sorting & Conveyor Dispatch","rationale":"Replaced sport-specific terminology with an industrial automated dispatch system.","suggestedText":"Culturally adapted version using regional queuing mental model.","isNeutralTechnical":false},{"id":"alt-neutral","metaphor":"Neutral Technical (Zero-Metaphor Direct Explanation)","rationale":"Engineers who prefer direct, idiom-free technical explanations without sporting or cultural analogies.","suggestedText":"FIFO Asynchronous Work Queue with backpressure buffer, exponential timeout eviction, and worker throughput tracking.","isNeutralTechnical":true}]},"localizedText":"## The Batting Queue Implementation","accepted":true},{"index":5,"type":"paragraph","startOffset":946,"endOffset":1214,"originalText":"In the following TypeScript snippet, we manage our incoming work requests using a `batterQueue`. When a new request arrives, it steps into the batter's box. If processing times out before the play finishes, we call `strikeOut()` to remove the batter and log the error.","maskedText":"In the following TypeScript snippet, we manage our incoming work requests using a `batterQueue`. When a new request arrives, it steps into the batter's box. If processing times out before the play finishes, we call `strikeOut()` to remove the batter and log the error.","urlMap":{},"inlineCodeTokens":["batterQueue","strikeOut()"],"intentCard":{"id":"intent-primary-1","sectionIndex":0,"codeBlockIndex":0,"associatedSymbols":["BattingLineupProcessor","BatterRequest","batterQueue","batterName","stepUpToPlate","pitchBall","strikeOut","retireBatter","homeRunCount","maxStrikes","swings","isHomeRun"],"originalMetaphor":"Baseball batting lineup","targetMetaphor":"Automated Parcel Sorting & Conveyor Dispatch","mismatchReason":"Baseball-specific terminology creates unnecessary cognitive overhead in European tech communities where logistical conveyor or service queue metaphors are standard.","rationale":"Replaced sport-specific terminology with an industrial automated dispatch system.","culturalContext":"European developer literature favors industrial automation and logistics metaphors for throughput and backpressure.","confidence":0.94,"alternatives":[{"id":"alt-1","metaphor":"Automated Parcel Sorting & Conveyor Dispatch","rationale":"Replaced sport-specific terminology with an industrial automated dispatch system.","suggestedText":"Culturally adapted version using regional queuing mental model.","isNeutralTechnical":false},{"id":"alt-neutral","metaphor":"Neutral Technical (Zero-Metaphor Direct Explanation)","rationale":"Engineers who prefer direct, idiom-free technical explanations without sporting or cultural analogies.","suggestedText":"FIFO Asynchronous Work Queue with backpressure buffer, exponential timeout eviction, and worker throughput tracking.","isNeutralTechnical":true}]},"localizedText":"In the following TypeScript snippet, we manage our incoming work requests using a `jobQueue`. When a new request arrives, it steps into the batter's box. If processing times out before the play finishes, we call `abortJob()` to remove the batter and log the error.","accepted":true},{"index":6,"type":"heading","startOffset":2682,"endOffset":2711,"originalText":"## Managing Dugout Congestion","maskedText":"## Managing Dugout Congestion","urlMap":{},"inlineCodeTokens":[],"intentCard":{"id":"intent-primary-1","sectionIndex":0,"codeBlockIndex":0,"associatedSymbols":["BattingLineupProcessor","BatterRequest","batterQueue","batterName","stepUpToPlate","pitchBall","strikeOut","retireBatter","homeRunCount","maxStrikes","swings","isHomeRun"],"originalMetaphor":"Baseball batting lineup","targetMetaphor":"Automated Parcel Sorting & Conveyor Dispatch","mismatchReason":"Baseball-specific terminology creates unnecessary cognitive overhead in European tech communities where logistical conveyor or service queue metaphors are standard.","rationale":"Replaced sport-specific terminology with an industrial automated dispatch system.","culturalContext":"European developer literature favors industrial automation and logistics metaphors for throughput and backpressure.","confidence":0.94,"alternatives":[{"id":"alt-1","metaphor":"Automated Parcel Sorting & Conveyor Dispatch","rationale":"Replaced sport-specific terminology with an industrial automated dispatch system.","suggestedText":"Culturally adapted version using regional queuing mental model.","isNeutralTechnical":false},{"id":"alt-neutral","metaphor":"Neutral Technical (Zero-Metaphor Direct Explanation)","rationale":"Engineers who prefer direct, idiom-free technical explanations without sporting or cultural analogies.","suggestedText":"FIFO Asynchronous Work Queue with backpressure buffer, exponential timeout eviction, and worker throughput tracking.","isNeutralTechnical":true}]},"localizedText":"## Managing Dugout Congestion","accepted":true},{"index":7,"type":"paragraph","startOffset":2713,"endOffset":2944,"originalText":"Notice how our `batterQueue` keeps incoming jobs orderly. If the pitcher is delayed, new batters remain patiently in the dugout. However, if the bullpen fills up completely, we must apply backpressure or drop low-priority requests.","maskedText":"Notice how our `batterQueue` keeps incoming jobs orderly. If the pitcher is delayed, new batters remain patiently in the dugout. However, if the bullpen fills up completely, we must apply backpressure or drop low-priority requests.","urlMap":{},"inlineCodeTokens":["batterQueue"],"intentCard":{"id":"intent-primary-1","sectionIndex":0,"codeBlockIndex":0,"associatedSymbols":["BattingLineupProcessor","BatterRequest","batterQueue","batterName","stepUpToPlate","pitchBall","strikeOut","retireBatter","homeRunCount","maxStrikes","swings","isHomeRun"],"originalMetaphor":"Baseball batting lineup","targetMetaphor":"Automated Parcel Sorting & Conveyor Dispatch","mismatchReason":"Baseball-specific terminology creates unnecessary cognitive overhead in European tech communities where logistical conveyor or service queue metaphors are standard.","rationale":"Replaced sport-specific terminology with an industrial automated dispatch system.","culturalContext":"European developer literature favors industrial automation and logistics metaphors for throughput and backpressure.","confidence":0.94,"alternatives":[{"id":"alt-1","metaphor":"Automated Parcel Sorting & Conveyor Dispatch","rationale":"Replaced sport-specific terminology with an industrial automated dispatch system.","suggestedText":"Culturally adapted version using regional queuing mental model.","isNeutralTechnical":false},{"id":"alt-neutral","metaphor":"Neutral Technical (Zero-Metaphor Direct Explanation)","rationale":"Engineers who prefer direct, idiom-free technical explanations without sporting or cultural analogies.","suggestedText":"FIFO Asynchronous Work Queue with backpressure buffer, exponential timeout eviction, and worker throughput tracking.","isNeutralTechnical":true}]},"localizedText":"Notice how our `jobQueue` keeps incoming jobs orderly. If the worker dispatcher is delayed, new work items remain patiently in the buffer backlog. However, if the bullpen fills up completely, we must apply backpressure or drop low-priority requests.","accepted":true},{"index":8,"type":"paragraph","startOffset":2946,"endOffset":3194,"originalText":"For comprehensive league standards and queue management rules, refer to the [Official Baseball Rules](https://mlb.com/rules) and consult our system architecture docs at [Internal Microservices Guide](https://internal.example.com/docs/architecture).","maskedText":"For comprehensive league standards and queue management rules, refer to the [Official Baseball Rules](__URL_REF_0__) and consult our system architecture docs at [Internal Microservices Guide](__URL_REF_1__).","urlMap":{"__URL_REF_0__":"https://mlb.com/rules","__URL_REF_1__":"https://internal.example.com/docs/architecture"},"inlineCodeTokens":[],"intentCard":{"id":"intent-primary-1","sectionIndex":0,"codeBlockIndex":0,"associatedSymbols":["BattingLineupProcessor","BatterRequest","batterQueue","batterName","stepUpToPlate","pitchBall","strikeOut","retireBatter","homeRunCount","maxStrikes","swings","isHomeRun"],"originalMetaphor":"Baseball batting lineup","targetMetaphor":"Automated Parcel Sorting & Conveyor Dispatch","mismatchReason":"Baseball-specific terminology creates unnecessary cognitive overhead in European tech communities where logistical conveyor or service queue metaphors are standard.","rationale":"Replaced sport-specific terminology with an industrial automated dispatch system.","culturalContext":"European developer literature favors industrial automation and logistics metaphors for throughput and backpressure.","confidence":0.94,"alternatives":[{"id":"alt-1","metaphor":"Automated Parcel Sorting & Conveyor Dispatch","rationale":"Replaced sport-specific terminology with an industrial automated dispatch system.","suggestedText":"Culturally adapted version using regional queuing mental model.","isNeutralTechnical":false},{"id":"alt-neutral","metaphor":"Neutral Technical (Zero-Metaphor Direct Explanation)","rationale":"Engineers who prefer direct, idiom-free technical explanations without sporting or cultural analogies.","suggestedText":"FIFO Asynchronous Work Queue with backpressure buffer, exponential timeout eviction, and worker throughput tracking.","isNeutralTechnical":true}]},"localizedText":"For comprehensive league standards and queue management rules, refer to the [Official Baseball Rules](https://mlb.com/rules) and consult our system architecture docs at [Internal Microservices Guide](https://internal.example.com/docs/architecture).","accepted":true},{"index":9,"type":"paragraph","startOffset":3196,"endOffset":3280,"originalText":"![Batting Order Architecture](https://assets.example.com/diagrams/batting-order.png)","maskedText":"![Batting Order Architecture](__URL_REF_0__)","urlMap":{"__URL_REF_0__":"https://assets.example.com/diagrams/batting-order.png"},"inlineCodeTokens":[],"intentCard":{"id":"intent-primary-1","sectionIndex":0,"codeBlockIndex":0,"associatedSymbols":["BattingLineupProcessor","BatterRequest","batterQueue","batterName","stepUpToPlate","pitchBall","strikeOut","retireBatter","homeRunCount","maxStrikes","swings","isHomeRun"],"originalMetaphor":"Baseball batting lineup","targetMetaphor":"Automated Parcel Sorting & Conveyor Dispatch","mismatchReason":"Baseball-specific terminology creates unnecessary cognitive overhead in European tech communities where logistical conveyor or service queue metaphors are standard.","rationale":"Replaced sport-specific terminology with an industrial automated dispatch system.","culturalContext":"European developer literature favors industrial automation and logistics metaphors for throughput and backpressure.","confidence":0.94,"alternatives":[{"id":"alt-1","metaphor":"Automated Parcel Sorting & Conveyor Dispatch","rationale":"Replaced sport-specific terminology with an industrial automated dispatch system.","suggestedText":"Culturally adapted version using regional queuing mental model.","isNeutralTechnical":false},{"id":"alt-neutral","metaphor":"Neutral Technical (Zero-Metaphor Direct Explanation)","rationale":"Engineers who prefer direct, idiom-free technical explanations without sporting or cultural analogies.","suggestedText":"FIFO Asynchronous Work Queue with backpressure buffer, exponential timeout eviction, and worker throughput tracking.","isNeutralTechnical":true}]},"localizedText":"![Batting Order Architecture](https://assets.example.com/diagrams/batting-order.png)","accepted":true},{"index":10,"type":"paragraph","startOffset":3282,"endOffset":3413,"originalText":"Always ensure your `strikeOut()` handler properly cleans up allocated resources so memory leaks don't accumulate during long games.","maskedText":"Always ensure your `strikeOut()` handler properly cleans up allocated resources so memory leaks don't accumulate during long games.","urlMap":{},"inlineCodeTokens":["strikeOut()"],"intentCard":{"id":"intent-primary-1","sectionIndex":0,"codeBlockIndex":0,"associatedSymbols":["BattingLineupProcessor","BatterRequest","batterQueue","batterName","stepUpToPlate","pitchBall","strikeOut","retireBatter","homeRunCount","maxStrikes","swings","isHomeRun"],"originalMetaphor":"Baseball batting lineup","targetMetaphor":"Automated Parcel Sorting & Conveyor Dispatch","mismatchReason":"Baseball-specific terminology creates unnecessary cognitive overhead in European tech communities where logistical conveyor or service queue metaphors are standard.","rationale":"Replaced sport-specific terminology with an industrial automated dispatch system.","culturalContext":"European developer literature favors industrial automation and logistics metaphors for throughput and backpressure.","confidence":0.94,"alternatives":[{"id":"alt-1","metaphor":"Automated Parcel Sorting & Conveyor Dispatch","rationale":"Replaced sport-specific terminology with an industrial automated dispatch system.","suggestedText":"Culturally adapted version using regional queuing mental model.","isNeutralTechnical":false},{"id":"alt-neutral","metaphor":"Neutral Technical (Zero-Metaphor Direct Explanation)","rationale":"Engineers who prefer direct, idiom-free technical explanations without sporting or cultural analogies.","suggestedText":"FIFO Asynchronous Work Queue with backpressure buffer, exponential timeout eviction, and worker throughput tracking.","isNeutralTechnical":true}]},"localizedText":"Always ensure your `abortJob()` handler properly cleans up allocated resources so memory leaks don't accumulate during long games.","accepted":true}],"htmlViewerPath":"C:\\New folder\\fixtures\\baseball-tutorial.de-DE.diff.html","stats":{"metaphorsTranscreated":1,"codeIdentifiersAdapted":12,"codeBlocksValidated":1,"proseNodesTranscreated":11}};
+    let currentData = JSON.parse(JSON.stringify(INITIAL_DATA));
+    let selectedHunkIndex = 0;
+
+    function escapeHtml(text) {
+      if (!text) return "";
+      return text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+    }
+
+    function switchView(viewName) {
+      document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+      document.querySelectorAll(".view-pane").forEach(p => p.classList.remove("active"));
+
+      if (viewName === "split") {
+        document.querySelector(".tab-btn:nth-child(1)").classList.add("active");
+        document.getElementById("split-view").classList.add("active");
+      } else if (viewName === "diff") {
+        document.querySelector(".tab-btn:nth-child(2)").classList.add("active");
+        document.getElementById("diff-view").classList.add("active");
+      } else if (viewName === "rendered") {
+        document.querySelector(".tab-btn:nth-child(3)").classList.add("active");
+        document.getElementById("rendered-view").classList.add("active");
+        renderArticle();
+      }
+    }
+
+    function toggleTheme() {
+      const html = document.documentElement;
+      html.classList.toggle("light");
+      html.classList.toggle("dark");
+    }
+
+    function toggleDrawer() {
+      const drawer = document.getElementById("intent-drawer");
+      drawer.classList.toggle("open");
+    }
+
+    function renderSplitNodes() {
+      const origContainer = document.getElementById("original-nodes");
+      const transContainer = document.getElementById("transcreated-nodes");
+      origContainer.innerHTML = "";
+      transContainer.innerHTML = "";
+
+      currentData.proseNodes.forEach((node, idx) => {
+        // Original
+        const origDiv = document.createElement("div");
+        origDiv.className = "section-hunk";
+        origDiv.id = "orig-" + idx;
+        origDiv.innerHTML = '<div style="color: var(--text-muted); font-size: 11px; margin-bottom: 4px;">Hunk #' + (idx + 1) + ' (' + node.type + ')</div>' +
+          '<div style="white-space: pre-wrap;">' + escapeHtml(node.originalText) + '</div>';
+        origContainer.appendChild(origDiv);
+
+        // Transcreated
+        const transDiv = document.createElement("div");
+        transDiv.className = "section-hunk";
+        transDiv.id = "trans-" + idx;
+        const statusClass = node.accepted ? "status-accepted" : "status-rejected";
+
+        let intentBadge = "";
+        if (node.intentCard) {
+          intentBadge = '<div class="intent-tag" onclick="showIntentCard(' + idx + ')">' +
+            '<span>Intent: ' + escapeHtml(node.intentCard.originalMetaphor) + ' → ' + escapeHtml(node.intentCard.targetMetaphor) + '</span>' +
+          '</div>';
+        }
+
+        transDiv.innerHTML = intentBadge +
+          '<div style="white-space: pre-wrap;" class="' + statusClass + '">' +
+            escapeHtml(node.accepted ? node.localizedText : node.originalText) +
+          '</div>' +
+          '<div class="hunk-controls">' +
+            '<button class="hunk-btn" onclick="acceptHunk(' + idx + ')">Accept</button>' +
+            '<button class="hunk-btn" onclick="rejectHunk(' + idx + ')">Reject</button>' +
+            (node.intentCard ? '<button class="hunk-btn" onclick="showIntentCard(' + idx + ')">Alternatives</button>' : '') +
+          '</div>';
+        transContainer.appendChild(transDiv);
+      });
+
+      // Synchronize scroll
+      const origCol = document.getElementById("col-original");
+      const transCol = document.getElementById("col-transcreated");
+      let isSyncing = false;
+
+      origCol.onscroll = () => {
+        if (!isSyncing) {
+          isSyncing = true;
+          transCol.scrollTop = origCol.scrollTop;
+          isSyncing = false;
+        }
+      };
+      transCol.onscroll = () => {
+        if (!isSyncing) {
+          isSyncing = true;
+          origCol.scrollTop = transCol.scrollTop;
+          isSyncing = false;
+        }
+      };
+    }
+
+    function acceptHunk(idx) {
+      currentData.proseNodes[idx].accepted = true;
+      renderSplitNodes();
+    }
+
+    function rejectHunk(idx) {
+      currentData.proseNodes[idx].accepted = false;
+      renderSplitNodes();
+    }
+
+    function showIntentCard(idx) {
+      const card = currentData.intentCards[0];
+      if (!card) return;
+
+      const body = document.getElementById("drawer-content");
+      body.innerHTML = 
+        '<div class="card-box">' +
+          '<h4>Original Metaphor</h4>' +
+          '<p><strong>' + escapeHtml(card.originalMetaphor) + '</strong></p>' +
+        '</div>' +
+        '<div class="card-box">' +
+          '<h4>Cultural Mismatch Reason</h4>' +
+          '<p>' + escapeHtml(card.mismatchReason) + '</p>' +
+        '</div>' +
+        '<div class="card-box">' +
+          '<h4>Target Adaptation</h4>' +
+          '<p><strong>' + escapeHtml(card.targetMetaphor) + '</strong></p>' +
+          '<p style="margin-top: 6px; color: var(--text-muted);">' + escapeHtml(card.rationale) + '</p>' +
+        '</div>' +
+        '<div class="card-box">' +
+          '<h4>Select Alternative / Neutral Fallback</h4>' +
+          card.alternatives.map((alt, aIdx) => 
+            '<div class="alt-option ' + (alt.isNeutralTechnical ? 'neutral-option' : '') + '" onclick="selectAlternative(' + idx + ', ' + aIdx + ')">' +
+              '<div style="font-weight: 600; font-size: 13px;">' + (alt.isNeutralTechnical ? '🛡️ ' : '🎯 ') + escapeHtml(alt.metaphor) + '</div>' +
+              '<div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">' + escapeHtml(alt.rationale) + '</div>' +
+            '</div>'
+          ).join('') +
+        '</div>';
+
+      document.getElementById("intent-drawer").classList.add("open");
+    }
+
+    function selectAlternative(proseIdx, altIdx) {
+      const card = currentData.intentCards[0];
+      const alt = card.alternatives[altIdx];
+      if (!alt) return;
+
+      if (alt.isNeutralTechnical) {
+        currentData.proseNodes[proseIdx].localizedText = alt.suggestedText;
+      }
+      renderSplitNodes();
+      document.getElementById("intent-drawer").classList.remove("open");
+    }
+
+    function renderArticle() {
+      const container = document.getElementById("rendered-content");
+      let html = "";
+
+      // Simple rendered markdown representation
+      currentData.proseNodes.forEach(node => {
+        const text = node.accepted ? node.localizedText : node.originalText;
+        if (text.startsWith("# ")) {
+          html += "<h1>" + escapeHtml(text.slice(2)) + "</h1>";
+        } else if (text.startsWith("## ")) {
+          html += "<h2>" + escapeHtml(text.slice(3)) + "</h2>";
+        } else {
+          html += "<p>" + escapeHtml(text) + "</p>";
+        }
+      });
+
+      // Code blocks
+      if (currentData.codeBlocks.length > 0) {
+        const block = currentData.codeBlocks[0];
+        html += "<pre><code>" + escapeHtml(block.transformedCode || block.originalCode) + "</code></pre>";
+      }
+
+      container.innerHTML = html;
+    }
+
+    function exportMarkdown() {
+      const content = currentData.transcreatedMarkdown;
+      const blob = new Blob([content], { type: "text/markdown;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = currentData.filePath.replace(/\.md$/, "." + currentData.targetLocale + ".md");
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    async function saveToDisk() {
+      try {
+        const res = await fetch("/api/save", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            filePath: currentData.filePath,
+            targetLocale: currentData.targetLocale,
+            markdown: currentData.transcreatedMarkdown
+          })
+        });
+        if (res.ok) {
+          alert("Successfully saved localized markdown to disk!");
+        } else {
+          alert("Error saving file to disk.");
+        }
+      } catch (err) {
+        alert("Server not reachable: " + err.message);
+      }
+    }
+
+    // Keyboard shortcuts
+    window.addEventListener("keydown", (e) => {
+      if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") return;
+      if (e.key === "j") {
+        selectedHunkIndex = Math.min(selectedHunkIndex + 1, currentData.proseNodes.length - 1);
+        const el = document.getElementById("trans-" + selectedHunkIndex);
+        if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+      } else if (e.key === "k") {
+        selectedHunkIndex = Math.max(selectedHunkIndex - 1, 0);
+        const el = document.getElementById("trans-" + selectedHunkIndex);
+        if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+      } else if (e.key === "a") {
+        acceptHunk(selectedHunkIndex);
+      } else if (e.key === "r") {
+        rejectHunk(selectedHunkIndex);
+      } else if (e.key === " ") {
+        e.preventDefault();
+        toggleDrawer();
+      }
+    });
+
+    // Initialize
+    renderSplitNodes();
+  </script>
+</body>
+</html>

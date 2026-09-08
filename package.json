@@ -1,0 +1,54 @@
+{
+  "name": "transcreate",
+  "version": "0.1.0",
+  "description": "Cultural Transcreation & Intent Diff Engine for Technical Documentation and Developer Content",
+  "main": "dist/index.js",
+  "type": "module",
+  "bin": {
+    "transcreate": "./dist/cli.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run",
+    "dev": "tsx src/cli.ts",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "transcreation",
+    "localization",
+    "technical-writing",
+    "devrel",
+    "markdown",
+    "mdx",
+    "ast",
+    "diff"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@ai-sdk/openai": "^1.1.9",
+    "@babel/parser": "^7.26.9",
+    "@babel/types": "^7.26.9",
+    "ai": "^4.1.45",
+    "commander": "^13.1.0",
+    "diff": "^7.0.0",
+    "magic-string": "^0.30.17",
+    "recast": "^0.23.9",
+    "remark-frontmatter": "^5.0.0",
+    "remark-gfm": "^4.0.1",
+    "remark-mdx": "^3.1.0",
+    "remark-parse": "^11.0.0",
+    "unified": "^11.0.5",
+    "unist-util-visit": "^5.0.0",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@types/diff": "^7.0.2",
+    "@types/mdast": "^4.0.4",
+    "@types/node": "^22.13.5",
+    "@types/unist": "^3.0.3",
+    "tsx": "^4.19.3",
+    "typescript": "^5.7.3",
+    "vitest": "^3.0.6"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "defaultTargetLocale": "ja-JP",
+  "glossaryPath": ".transcreate/glossary.json",
+  "locales": {
+    "ja-JP": {
+      "preferredDomains": ["train-dispatching", "sushi-conveyor", "convenience-store-supply", "traditional-crafts"],
+      "avoidedMetaphors": ["american-football", "nascar"]
+    },
+    "hi-IN": {
+      "preferredDomains": ["railway-reservation", "cricket", "chai-stall-supply-chain"],
+      "avoidedMetaphors": ["ice-hockey", "curling"]
+    }
+  }
+}

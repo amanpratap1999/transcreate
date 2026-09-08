@@ -1,0 +1,53 @@
+{
+  "ja-JP": {
+    "primaryMetaphor": "Shinkansen high-speed rail dispatching and boarding queue",
+    "symbolTable": {
+      "BattingLineupProcessor": "TrainDispatchProcessor",
+      "BatterRequest": "PassengerRequest",
+      "batterQueue": "passengerQueue",
+      "batterName": "passengerName",
+      "stepUpToPlate": "arriveAtPlatform",
+      "pitchBall": "dispatchTrain",
+      "strikeOut": "cancelTicket",
+      "retireBatter": "clearPassenger",
+      "homeRunCount": "departedTrainCount",
+      "maxStrikes": "maxRetries",
+      "swings": "retryAttempts",
+      "isHomeRun": "isExpressDeparted"
+    }
+  },
+  "hi-IN": {
+    "primaryMetaphor": "IRCTC Tatkal railway reservation queue and token counter",
+    "symbolTable": {
+      "BattingLineupProcessor": "TatkalQueueProcessor",
+      "BatterRequest": "PassengerRequest",
+      "batterQueue": "bookingQueue",
+      "batterName": "passengerName",
+      "stepUpToPlate": "enterQueue",
+      "pitchBall": "processBooking",
+      "strikeOut": "expireBooking",
+      "retireBatter": "dequeuePassenger",
+      "homeRunCount": "confirmedTicketCount",
+      "maxStrikes": "maxAttempts",
+      "swings": "attempts",
+      "isHomeRun": "isConfirmed"
+    }
+  },
+  "de-DE": {
+    "primaryMetaphor": "Automated Parcel Sorting & Conveyor Dispatch",
+    "symbolTable": {
+      "BattingLineupProcessor": "BatchQueueProcessor",
+      "BatterRequest": "JobRequest",
+      "batterQueue": "jobQueue",
+      "batterName": "jobName",
+      "stepUpToPlate": "enqueueJob",
+      "pitchBall": "processJob",
+      "strikeOut": "abortJob",
+      "retireBatter": "dequeueJob",
+      "homeRunCount": "completedJobCount",
+      "maxStrikes": "maxRetries",
+      "swings": "retries",
+      "isHomeRun": "isSuccess"
+    }
+  }
+}
