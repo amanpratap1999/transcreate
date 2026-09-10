@@ -1,0 +1,50 @@
+---
+title: "Complex Distributed Architecture"
+author: "DevRel Team"
+tags: ["queues", "distributed"]
+---
+
+import { Callout } from "@/components/ui";
+
+# एसिंक्रोनस इवेंट प्रोसेसिंग और बैकप्रेशर नियंत्रण
+
+उच्च-थ्रूपुट माइक्रोसर्विसेज का निर्माण करते समय, अक्सर अनुरोध वर्कर थ्रेड्स की प्रसंस्करण गति से अधिक तेजी से आते हैं। बिना उचित थ्रॉटलिंग के अत्यधिक लोड पर सर्वर क्रैश हो सकता है।
+
+<Callout type="warning">
+  Always monitor queue saturation metrics in production dashboards!
+</Callout>
+
+## तत्काल आरक्षण कतार का क्रियान्वयन
+
+एक इवेंट क्यू को रेलवे स्टेशन के तत्काल आरक्षण काउंटर की तरह समझें। यात्री अपनी बारी आने तक कतार में प्रतीक्षा करते हैं। बुकिंग काउंटर एक समय में एक अनुरोध संसाधित करता है। यदि कोई अनुरोध समय सीमा पार कर जाता है, तो टिकट निरस्त कर दिया जाता है ताकि कतार आगे बढ़ सके।
+
+```typescript
+export interface PassengerRequest {
+  id: string;
+  passengerName: string;
+}
+
+export class TatkalQueueProcessor {
+  private bookingQueue: PassengerRequest[] = [];
+  public enterQueue(batter: PassengerRequest): void {
+    this.bookingQueue.push(batter);
+  }
+}
+```
+
+ध्यान दें कि कैसे हमारी `bookingQueue` आने वाले कार्यों को व्यवस्थित रखती है। यदि सर्वर व्यस्त है, तो नए अनुरोध प्रतीक्षा करते हैं।
+
+## Secondary Worker Routine
+
+In addition to the main processor, worker routines handle persistence:
+
+```typescript
+function processBooking(batter: any): boolean {
+  console.log("Pitching to: ", batter);
+  return true;
+}
+```
+
+Check out our reference documentation at [MLB Rules](https://mlb.com/rules) and [Architecture Guide](https://example.com/architecture).
+
+> Long-lived worker queues must handle connection dropouts gracefully.

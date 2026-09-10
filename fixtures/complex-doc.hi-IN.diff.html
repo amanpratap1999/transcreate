@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Transcreate Review: C:\New folder\fixtures\complex-doc.mdx (hi-IN)</title>
+  <style>
+    :root {
+      --bg-base: #0f172a;
+      --bg-surface: #1e293b;
+      --bg-subtle: #334155;
+      --border-color: #334155;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent: #38bdf8;
+      --accent-hover: #0ea5e9;
+      --diff-add-bg: rgba(34, 197, 94, 0.15);
+      --diff-add-text: #4ade80;
+      --diff-del-bg: rgba(239, 68, 68, 0.15);
+      --diff-del-text: #f87171;
+      --code-bg: #090d16;
+    }
+    html.light {
+      --bg-base: #f8fafc;
+      --bg-surface: #ffffff;
+      --bg-subtle: #e2e8f0;
+      --border-color: #cbd5e1;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --accent: #0284c7;
+      --accent-hover: #0369a1;
+      --diff-add-bg: rgba(34, 197, 94, 0.12);
+      --diff-add-text: #15803d;
+      --diff-del-bg: rgba(239, 68, 68, 0.12);
+      --diff-del-text: #b91c1c;
+      --code-bg: #f1f5f9;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg-base);
+      color: var(--text-main);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    header {
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border-color);
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+      gap: 16px;
+    }
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .badge {
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      background: var(--bg-subtle);
+      color: var(--accent);
+    }
+    .badge-pill {
+      background: rgba(56, 189, 248, 0.15);
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      border-radius: 9999px;
+      padding: 2px 10px;
+      font-size: 11px;
+    }
+    .badge-valid {
+      background: rgba(34, 197, 94, 0.15);
+      border: 1px solid #22c55e;
+      color: #4ade80;
+      border-radius: 9999px;
+      padding: 2px 10px;
+      font-size: 11px;
+    }
+    .nav-tabs {
+      display: flex;
+      background: var(--bg-base);
+      border-radius: 8px;
+      padding: 3px;
+      gap: 4px;
+      border: 1px solid var(--border-color);
+    }
+    .tab-btn {
+      padding: 6px 14px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+      transition: all 0.15s ease;
+    }
+    .tab-btn.active {
+      background: var(--bg-surface);
+      color: var(--text-main);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    }
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .btn {
+      padding: 8px 14px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border: 1px solid var(--border-color);
+      background: var(--bg-surface);
+      color: var(--text-main);
+      transition: all 0.15s ease;
+    }
+    .btn:hover {
+      background: var(--bg-subtle);
+    }
+    .btn-primary {
+      background: var(--accent);
+      color: #0f172a;
+      border-color: var(--accent);
+    }
+    .btn-primary:hover {
+      background: var(--accent-hover);
+    }
+    main {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+      position: relative;
+    }
+    .view-pane {
+      display: none;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+    }
+    .view-pane.active {
+      display: flex;
+    }
+    /* Split View */
+    .split-container {
+      display: flex;
+      width: 100%;
+      height: 100%;
+    }
+    .split-col {
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px;
+      border-right: 1px solid var(--border-color);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    .split-col:last-child {
+      border-right: none;
+    }
+    .col-header {
+      position: sticky;
+      top: -24px;
+      background: var(--bg-surface);
+      padding: 10px 16px;
+      margin: -24px -24px 20px -24px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 600;
+      font-size: 13px;
+      z-index: 10;
+    }
+    /* Unified PR Diff */
+    .diff-view {
+      width: 100%;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 13px;
+      line-height: 1.5;
+      padding: 24px;
+    }
+    .diff-line {
+      display: flex;
+      padding: 2px 8px;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+    .diff-add {
+      background: var(--diff-add-bg);
+      color: var(--diff-add-text);
+    }
+    .diff-del {
+      background: var(--diff-del-bg);
+      color: var(--diff-del-text);
+    }
+    .diff-marker {
+      width: 24px;
+      user-select: none;
+      color: var(--text-muted);
+      flex-shrink: 0;
+    }
+    /* Rendered Preview */
+    .rendered-container {
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 48px 24px;
+      width: 100%;
+      line-height: 1.7;
+    }
+    .rendered-container h1 { font-size: 28px; margin-bottom: 16px; }
+    .rendered-container h2 { font-size: 20px; margin-top: 28px; margin-bottom: 12px; }
+    .rendered-container p { margin-bottom: 16px; }
+    .rendered-container pre {
+      background: var(--code-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 16px;
+      overflow-x: auto;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 13px;
+      margin-bottom: 20px;
+    }
+    /* Intent Drawer */
+    .drawer-overlay {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: 440px;
+      background: var(--bg-surface);
+      border-left: 1px solid var(--border-color);
+      box-shadow: -4px 0 24px rgba(0,0,0,0.35);
+      transform: translateX(100%);
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 50;
+      display: flex;
+      flex-direction: column;
+    }
+    .drawer-overlay.open {
+      transform: translateX(0);
+    }
+    .drawer-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .drawer-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .card-box {
+      background: var(--bg-base);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 14px;
+    }
+    .card-box h4 {
+      font-size: 12px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+      letter-spacing: 0.05em;
+    }
+    .card-box p {
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .alt-option {
+      background: var(--bg-base);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 12px;
+      margin-top: 8px;
+      cursor: pointer;
+      transition: border-color 0.15s ease;
+    }
+    .alt-option:hover {
+      border-color: var(--accent);
+    }
+    .alt-option.selected {
+      border-color: var(--accent);
+      background: rgba(56, 189, 248, 0.05);
+    }
+    .intent-tag {
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 12px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+    .section-hunk {
+      position: relative;
+      padding: 12px;
+      border: 1px solid transparent;
+      border-radius: 8px;
+      margin-bottom: 12px;
+    }
+    .section-hunk:hover {
+      border-color: var(--border-color);
+      background: rgba(255, 255, 255, 0.02);
+    }
+    .hunk-controls {
+      display: flex;
+      gap: 6px;
+      margin-top: 8px;
+    }
+    .hunk-btn {
+      padding: 4px 8px;
+      border-radius: 4px;
+      border: 1px solid var(--border-color);
+      background: var(--bg-subtle);
+      color: var(--text-main);
+      font-size: 11px;
+      cursor: pointer;
+    }
+    .hunk-btn:hover { background: var(--border-color); }
+    .status-accepted { color: #4ade80; }
+    .status-rejected { color: #f87171; text-decoration: line-through; }
+    /* Keyboard help pill */
+    .keyboard-hint {
+      position: absolute;
+      bottom: 12px;
+      left: 24px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 11px;
+      color: var(--text-muted);
+      display: flex;
+      gap: 8px;
+      z-index: 20;
+    }
+    kbd {
+      background: var(--bg-subtle);
+      padding: 1px 4px;
+      border-radius: 3px;
+      color: var(--text-main);
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-left">
+      <span class="badge">Transcreate</span>
+      <h3 style="font-size: 14px; font-weight: 600;">C:\New folder\fixtures\complex-doc.mdx</h3>
+      <span class="badge-pill">Target: hi-IN</span>
+      <span class="badge-valid">AST Valid: 100%</span>
+    </div>
+
+    <div class="nav-tabs">
+      <button class="tab-btn active" onclick="switchView('split')">Split View</button>
+      <button class="tab-btn" onclick="switchView('diff')">Unified Diff</button>
+      <button class="tab-btn" onclick="switchView('rendered')">Rendered Article</button>
+    </div>
+
+    <div class="header-right">
+      <button class="btn" onclick="toggleDrawer()" title="View Cultural Intent Cards">
+        <span>Intent Drawer (1)</span>
+      </button>
+      <button class="btn" onclick="toggleTheme()" title="Toggle Theme">
+        <span id="theme-label">Theme</span>
+      </button>
+      <button class="btn btn-primary" onclick="exportMarkdown()">
+        Export Markdown
+      </button>
+      
+    </div>
+  </header>
+
+  <main>
+    <!-- View 1: Split View -->
+    <div id="split-view" class="view-pane active">
+      <div class="split-container">
+        <!-- Original Column -->
+        <div class="split-col" id="col-original">
+          <div class="col-header">
+            <span>Original Source (en-US)</span>
+            <span style="color: var(--text-muted); font-size: 11px;">Read-only reference</span>
+          </div>
+          <div id="original-nodes"></div>
+        </div>
+
+        <!-- Localized Column -->
+        <div class="split-col" id="col-transcreated">
+          <div class="col-header">
+            <span>Transcreated (hi-IN)</span>
+            <span style="color: var(--text-muted); font-size: 11px;">Section Actions</span>
+          </div>
+          <div id="transcreated-nodes"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- View 2: Unified Diff -->
+    <div id="diff-view" class="view-pane">
+      <div class="diff-view">
+        
+            <div class="diff-line ">
+              <span class="diff-marker">  </span>
+              <span>---</span>
+            </div>
+          
+            <div class="diff-line ">
+              <span class="diff-marker">  </span>
+              <span>title: "Complex Distributed Architecture"</span>
+            </div>
+          
+            <div class="diff-line ">
+              <span class="diff-marker">  </span>
+              <span>author: "DevRel Team"</span>
+            </div>
+          
+            <div class="diff-line ">
+              <span class="diff-marker">  </span>
+              <span>tags: ["queues", "distributed"]</span>
+            </div>
+          
+            <div class="diff-line ">
+              <span class="diff-marker">  </span>
+              <span>---</span>
+            </div>
+          
+            <div class="diff-line ">
+              <span class="diff-marker">  </span>
+              <span></span>
+            </div>
+          
+            <div class="diff-line ">
+              <span class="diff-marker">  </span>
+              <span>import { Callout } from "@/components/ui";</span>
+            </div>
+          
+            <div class="diff-line ">
+              <span class="diff-marker">  </span>
+              <span></span>
+            </div>
+          
+            <div class="diff-line diff-del">
+              <span class="diff-marker">- </span>
+              <span># Advanced Distributed Processing Systems</span>
+            </div>
+          
+            <div class="diff-line diff-add">
+              <span class="diff-marker">+ </span>
+              <span># एसिंक्रोनस इवेंट प्रोसेसिंग और बैकप्रेशर नियंत्रण</span>
+            </div>
+          
+            <div class="diff-line ">
+              <span class="diff-marker">  </span>
+              <span></span>
+            </div>
+          
+            <div class="diff-line diff-del">
+              <span class="diff-marker">- </span>
+              <span>When building high-throughput microservices, incoming load frequently outpaces consumer capacity.</span>
+            </div>
+          
+            <div class="diff-line diff-add">
+              <span class="diff-marker">+ </span>
+              <span>उच्च-थ्रूपुट माइक्रोसर्विसेज का निर्माण करते समय, अक्सर अनुरोध वर्कर थ्रेड्स की प्रसंस्करण गति से अधिक तेजी से आते हैं। बिना उचित थ्रॉटलिंग के अत्यधिक लोड पर सर्वर क्रैश हो सकता है।</span>
+            </div>
+          
+            <div class="diff-line ">
+              <span class="diff-marker">  </span>
+              <span></span>
+            </div>
+          
+            <div class="diff-line ">
+              <span class="diff-marker">  </span>
+              <span>&lt;Callout type="warning"&gt;</span>
+            </div>
+          
+            <div class="diff-line ">
+              <span class="diff-marker">  </span>
+              <span>  Always monitor queue saturation metrics in production dashboards!</span>
+            </div>
+          
+            <div class="diff-line ">
+              <span class="diff-marker">  </span>
+              <span>&lt;/Callout&gt;</span>
+            </div>
+          
+            <div class="diff-line ">
+              <span class="diff-marker">  </span>
+              <span></span>
+            </div>
+          
+            <div class="diff-line diff-del">
+              <span class="diff-marker">- </span>
+              <span>## The Batting Queue Implementation</span>
+            </div>
+          
+            <div class="diff-line diff-add">
+              <span class="diff-marker">+ </span>
+              <span>## तत्काल आरक्षण कतार का क्रियान्वयन</span>
+            </div>
+          
+            <div class="diff-line ">
+              <span class="diff-marker">  </span>
+              <span></span>
+            </div>
+          
+            <div class="diff-line diff-del">
+              <span class="diff-marker">- </span>
+              <span>Think of an event queue like a baseball batting lineup where batters wait in the dugout.</span>
+            </div>
+          
+            <div class="diff-line diff-add">
+              <span class="diff-marker">+ </span>
+              <span>एक इवेंट क्यू को रेलवे स्टेशन के तत्काल आरक्षण काउंटर की तरह समझें। यात्री अपनी बारी आने तक कतार में प्रतीक्षा करते हैं। बुकिंग काउंटर एक समय में एक अनुरोध संसाधित करता है। यदि कोई अनुरोध समय सीमा पार कर जाता है, तो टिकट निरस्त कर दिया जाता है ताकि कतार आगे बढ़ सके।</span>
+            </div>
+          
+            <div class="diff-line ">
+              <span class="diff-marker">  </span>
+              <span></span>
+            </div>
+          
+            <div class="diff-line ">
+              <span class="diff-marker">  </span>
+              <span>```typescript</span>
+            </div>
+          
+            <div class="diff-line diff-del">
+              <span class="diff-marker">- </span>
+              <span>export interface BatterRequest {</span>
+            </div>
+          
+            <div class="diff-line diff-del">
+              <span class="diff-marker">- </span>
+              <span>  id: string;</span>
+            </div>
+          
+            <div class="diff-line diff-del">
+              <span class="diff-marker">- </span>
+              <span>  batterName: string;</span>
+            </div>
+          
+            <div class="diff-line diff-add">
+              <span class="diff-marker">+ </span>
+              <span>export interface PassengerRequest {</span>
+            </div>
+          
+            <div class="diff-line diff-add">
+              <span class="diff-marker">+ </span>
+              <span>  id: string;</span>
+            </div>
+          
+            <div class="diff-line diff-add">
+              <span class="diff-marker">+ </span>
+              <span>  passengerName: string;</span>
+            </div>
+          
+            <div class="diff-line diff-add">
+              <span class="diff-marker">+ </span>
+              <span>}</span>
+            </div>
+          
+            <div class="diff-line diff-add">
+              <span class="diff-marker">+ </span>
+              <span></span>
+            </div>
+          
+            <div class="diff-line diff-add">
+              <span class="diff-marker">+ </span>
+              <span>export class TatkalQueueProcessor {</span>
+            </div>
+          
+            <div class="diff-line diff-add">
+              <span class="diff-marker">+ </span>
+              <span>  private bookingQueue: PassengerRequest[] = [];</span>
+            </div>
+          
+            <div class="diff-line diff-add">
+              <span class="diff-marker">+ </span>
+              <span>  public enterQueue(batter: PassengerRequest): void {</span>
+            </div>
+          
+            <div class="diff-line diff-add">
+              <span class="diff-marker">+ </span>
+              <span>    this.bookingQueue.push(batter);</span>
+            </div>
+          
+            <div class="diff-line diff-add">
+              <span class="diff-marker">+ </span>
+              <span>  }</span>
+            </div>
+          
+            <div class="diff-line ">
+              <span class="diff-marker">  </span>
+              <span>}</span>
+            </div>
+          
+            <div class="diff-line diff-del">
+              <span class="diff-marker">- </span>
+              <span></span>
+            </div>
+          
+            <div class="diff-line diff-del">
+              <span class="diff-marker">- </span>
+              <span>export class BattingLineupProcessor {</span>
+            </div>
+          
+            <div class="diff-line diff-del">
+              <span class="diff-marker">- </span>
+              <span>  private batterQueue: BatterRequest[] = [];</span>
+            </div>
+          
+            <div class="diff-line diff-del">
+              <span class="diff-marker">- </span>
+              <span>  public stepUpToPlate(batter: BatterRequest): void {</span>
+            </div>
+          
+            <div class="diff-line diff-del">
+              <span class="diff-marker">- </span>
+              <span>    this.batterQueue.push(batter);</span>
+            </div>
+          
+            <div class="diff-line diff-del">
+              <span class="diff-marker">- </span>
+              <span>  }</span>
+            </div>
+          
+            <div class="diff-line diff-del">
+              <span class="diff-marker">- </span>
+              <span>}</span>
+            </div>
+          
+            <div class="diff-line ">
+              <span class="diff-marker">  </span>
+              <span>```</span>
+            </div>
+          
+            <div class="diff-line ">
+              <span class="diff-marker">  </span>
+              <span></span>
+            </div>
+          
+            <div class="diff-line diff-del">
+              <span class="diff-marker">- </span>
+              <span>Notice how our `batterQueue` keeps incoming jobs orderly.</span>
+            </div>
+          
+            <div class="diff-line diff-add">
+              <span class="diff-marker">+ </span>
+              <span>ध्यान दें कि कैसे हमारी `bookingQueue` आने वाले कार्यों को व्यवस्थित रखती है। यदि सर्वर व्यस्त है, तो नए अनुरोध प्रतीक्षा करते हैं।</span>
+            </div>
+          
+            <div class="diff-line ">
+              <span class="diff-marker">  </span>
+              <span></span>
+            </div>
+          
+            <div class="diff-line ">
+              <span class="diff-marker">  </span>
+              <span>## Secondary Worker Routine</span>
+            </div>
+          
+            <div class="diff-line ">
+              <span class="diff-marker">  </span>
+              <span></span>
+            </div>
+          
+            <div class="diff-line ">
+              <span class="diff-marker">  </span>
+              <span>In addition to the main processor, worker routines handle persistence:</span>
+            </div>
+          
+            <div class="diff-line ">
+              <span class="diff-marker">  </span>
+              <span></span>
+            </div>
+          
+            <div class="diff-line ">
+              <span class="diff-marker">  </span>
+              <span>```typescript</span>
+            </div>
+          
+            <div class="diff-line diff-del">
+              <span class="diff-marker">- </span>
+              <span>function pitchBall(batter: any): boolean {</span>
+            </div>
+          
+            <div class="diff-line diff-del">
+              <span class="diff-marker">- </span>
+              <span>  console.log("Pitching to: ", batter);</span>
+            </div>
+          
+            <div class="diff-line diff-del">
+              <span class="diff-marker">- </span>
+              <span>  return true;</span>
+            </div>
+          
+            <div class="diff-line diff-add">
+              <span class="diff-marker">+ </span>
+              <span>function processBooking(batter: any): boolean {</span>
+            </div>
+          
+            <div class="diff-line diff-add">
+              <span class="diff-marker">+ </span>
+              <span>  console.log("Pitching to: ", batter);</span>
+            </div>
+          
+            <div class="diff-line diff-add">
+              <span class="diff-marker">+ </span>
+              <span>  return true;</span>
+            </div>
+          
+            <div class="diff-line ">
+              <span class="diff-marker">  </span>
+              <span>}</span>
+            </div>
+          
+            <div class="diff-line ">
+              <span class="diff-marker">  </span>
+              <span>```</span>
+            </div>
+          
+            <div class="diff-line ">
+              <span class="diff-marker">  </span>
+              <span></span>
+            </div>
+          
+            <div class="diff-line ">
+              <span class="diff-marker">  </span>
+              <span>Check out our reference documentation at [MLB Rules](https://mlb.com/rules) and [Architecture Guide](https://example.com/architecture).</span>
+            </div>
+          
+            <div class="diff-line ">
+              <span class="diff-marker">  </span>
+              <span></span>
+            </div>
+          
+            <div class="diff-line ">
+              <span class="diff-marker">  </span>
+              <span>&gt; Long-lived worker queues must handle connection dropouts gracefully.</span>
+            </div>
+          
+      </div>
+    </div>
+
+    <!-- View 3: Rendered Preview -->
+    <div id="rendered-view" class="view-pane">
+      <div class="rendered-container" id="rendered-content">
+        <!-- Injected dynamically based on accepted state -->
+      </div>
+    </div>
+
+    <!-- Side Intent Drawer -->
+    <div class="drawer-overlay" id="intent-drawer">
+      <div class="drawer-header">
+        <h3 style="font-size: 14px; font-weight: 600;">Cultural Intent Card</h3>
+        <button class="btn" onclick="toggleDrawer()" style="padding: 2px 8px;">✕</button>
+      </div>
+      <div class="drawer-body" id="drawer-content">
+        <!-- Populated via JS -->
+      </div>
+    </div>
+
+    <div class="keyboard-hint">
+      <span><kbd>j</kbd>/<kbd>k</kbd> Next/Prev Hunk</span>
+      <span><kbd>a</kbd> Accept</span>
+      <span><kbd>r</kbd> Reject</span>
+      <span><kbd>Space</kbd> Intent Drawer</span>
+    </div>
+  </main>
+
+  <script>
+    const INITIAL_DATA = {"filePath":"C:\\New folder\\fixtures\\complex-doc.mdx","targetLocale":"hi-IN","originalMarkdown":"---\ntitle: \"Complex Distributed Architecture\"\nauthor: \"DevRel Team\"\ntags: [\"queues\", \"distributed\"]\n---\n\nimport { Callout } from \"@/components/ui\";\n\n# Advanced Distributed Processing Systems\n\nWhen building high-throughput microservices, incoming load frequently outpaces consumer capacity.\n\n\u003cCallout type=\"warning\">\n  Always monitor queue saturation metrics in production dashboards!\n\u003c/Callout>\n\n## The Batting Queue Implementation\n\nThink of an event queue like a baseball batting lineup where batters wait in the dugout.\n\n```typescript\nexport interface BatterRequest {\n  id: string;\n  batterName: string;\n}\n\nexport class BattingLineupProcessor {\n  private batterQueue: BatterRequest[] = [];\n  public stepUpToPlate(batter: BatterRequest): void {\n    this.batterQueue.push(batter);\n  }\n}\n```\n\nNotice how our `batterQueue` keeps incoming jobs orderly.\n\n## Secondary Worker Routine\n\nIn addition to the main processor, worker routines handle persistence:\n\n```typescript\nfunction pitchBall(batter: any): boolean {\n  console.log(\"Pitching to: \", batter);\n  return true;\n}\n```\n\nCheck out our reference documentation at [MLB Rules](https://mlb.com/rules) and [Architecture Guide](https://example.com/architecture).\n\n> Long-lived worker queues must handle connection dropouts gracefully.\n","transcreatedMarkdown":"---\ntitle: \"Complex Distributed Architecture\"\nauthor: \"DevRel Team\"\ntags: [\"queues\", \"distributed\"]\n---\n\nimport { Callout } from \"@/components/ui\";\n\n# एसिंक्रोनस इवेंट प्रोसेसिंग और बैकप्रेशर नियंत्रण\n\nउच्च-थ्रूपुट माइक्रोसर्विसेज का निर्माण करते समय, अक्सर अनुरोध वर्कर थ्रेड्स की प्रसंस्करण गति से अधिक तेजी से आते हैं। बिना उचित थ्रॉटलिंग के अत्यधिक लोड पर सर्वर क्रैश हो सकता है।\n\n\u003cCallout type=\"warning\">\n  Always monitor queue saturation metrics in production dashboards!\n\u003c/Callout>\n\n## तत्काल आरक्षण कतार का क्रियान्वयन\n\nएक इवेंट क्यू को रेलवे स्टेशन के तत्काल आरक्षण काउंटर की तरह समझें। यात्री अपनी बारी आने तक कतार में प्रतीक्षा करते हैं। बुकिंग काउंटर एक समय में एक अनुरोध संसाधित करता है। यदि कोई अनुरोध समय सीमा पार कर जाता है, तो टिकट निरस्त कर दिया जाता है ताकि कतार आगे बढ़ सके।\n\n```typescript\nexport interface PassengerRequest {\r\n  id: string;\r\n  passengerName: string;\r\n}\r\n\r\nexport class TatkalQueueProcessor {\r\n  private bookingQueue: PassengerRequest[] = [];\r\n  public enterQueue(batter: PassengerRequest): void {\r\n    this.bookingQueue.push(batter);\r\n  }\r\n}\n```\n\nध्यान दें कि कैसे हमारी `bookingQueue` आने वाले कार्यों को व्यवस्थित रखती है। यदि सर्वर व्यस्त है, तो नए अनुरोध प्रतीक्षा करते हैं।\n\n## Secondary Worker Routine\n\nIn addition to the main processor, worker routines handle persistence:\n\n```typescript\nfunction processBooking(batter: any): boolean {\r\n  console.log(\"Pitching to: \", batter);\r\n  return true;\r\n}\n```\n\nCheck out our reference documentation at [MLB Rules](https://mlb.com/rules) and [Architecture Guide](https://example.com/architecture).\n\n> Long-lived worker queues must handle connection dropouts gracefully.\n","intentCards":[{"id":"intent-primary-1","sectionIndex":0,"codeBlockIndex":0,"associatedSymbols":["BattingLineupProcessor","BatterRequest","batterQueue","batterName","stepUpToPlate","pitchBall","strikeOut","retireBatter","homeRunCount","maxStrikes","swings","isHomeRun"],"originalMetaphor":"Baseball batting lineup and three strikes rule","targetMetaphor":"IRCTC Tatkal railway reservation queue and token counter","mismatchReason":"Baseball terminology (dugout, bullpen, strikes) is largely unfamiliar in India where cricket or railway reservation tokens serve as universal queuing models.","rationale":"Re-anchored to the familiar high-concurrency Tatkal ticket reservation and passenger queue. Clearly illustrates queuing, retry limits, and quota fulfillment.","culturalContext":"IRCTC queuing is universally understood by Indian software developers as the quintessential high-concurrency, high-throughput distributed system.","confidence":0.94,"alternatives":[{"id":"alt-1","metaphor":"IRCTC Tatkal railway reservation queue and token counter","rationale":"Re-anchored to the familiar high-concurrency Tatkal ticket reservation and passenger queue. Clearly illustrates queuing, retry limits, and quota fulfillment.","suggestedText":"Culturally adapted version using regional queuing mental model.","isNeutralTechnical":false},{"id":"alt-neutral","metaphor":"Neutral Technical (Zero-Metaphor Direct Explanation)","rationale":"Engineers who prefer direct, idiom-free technical explanations without sporting or cultural analogies.","suggestedText":"FIFO Asynchronous Work Queue with backpressure buffer, exponential timeout eviction, and worker throughput tracking.","isNeutralTechnical":true}]}],"symbolTable":{"BattingLineupProcessor":"TatkalQueueProcessor","BatterRequest":"PassengerRequest","batterQueue":"bookingQueue","batterName":"passengerName","stepUpToPlate":"enterQueue","pitchBall":"processBooking","strikeOut":"expireBooking","retireBatter":"dequeuePassenger","homeRunCount":"confirmedTicketCount","maxStrikes":"maxAttempts","swings":"attempts","isHomeRun":"isConfirmed"},"codeBlocks":[{"index":0,"lang":"typescript","startOffset":523,"endOffset":790,"originalCode":"export interface BatterRequest {\n  id: string;\n  batterName: string;\n}\n\nexport class BattingLineupProcessor {\n  private batterQueue: BatterRequest[] = [];\n  public stepUpToPlate(batter: BatterRequest): void {\n    this.batterQueue.push(batter);\n  }\n}","candidateSymbols":[{"name":"BatterRequest","kind":"type","line":1,"contextSnippet":"interface BatterRequest"},{"name":"BattingLineupProcessor","kind":"class","line":1,"contextSnippet":"class BattingLineupProcessor"},{"name":"batterQueue","kind":"variable","line":7,"contextSnippet":"batterQueue"},{"name":"stepUpToPlate","kind":"function","line":8,"contextSnippet":"stepUpToPlate()"}],"associatedSectionIndices":[5],"transformedCode":"export interface PassengerRequest {\r\n  id: string;\r\n  passengerName: string;\r\n}\r\n\r\nexport class TatkalQueueProcessor {\r\n  private bookingQueue: PassengerRequest[] = [];\r\n  public enterQueue(batter: PassengerRequest): void {\r\n    this.bookingQueue.push(batter);\r\n  }\r\n}","syntaxValid":true,"flaggedForHumanReview":false},{"index":1,"lang":"typescript","startOffset":952,"endOffset":1069,"originalCode":"function pitchBall(batter: any): boolean {\n  console.log(\"Pitching to: \", batter);\n  return true;\n}","candidateSymbols":[{"name":"pitchBall","kind":"function","line":1,"contextSnippet":"pitchBall()"}],"associatedSectionIndices":[],"transformedCode":"function processBooking(batter: any): boolean {\r\n  console.log(\"Pitching to: \", batter);\r\n  return true;\r\n}","syntaxValid":true,"flaggedForHumanReview":false}],"proseNodes":[{"index":0,"type":"heading","startOffset":149,"endOffset":190,"originalText":"# Advanced Distributed Processing Systems","maskedText":"# Advanced Distributed Processing Systems","urlMap":{},"inlineCodeTokens":[],"intentCard":{"id":"intent-primary-1","sectionIndex":0,"codeBlockIndex":0,"associatedSymbols":["BattingLineupProcessor","BatterRequest","batterQueue","batterName","stepUpToPlate","pitchBall","strikeOut","retireBatter","homeRunCount","maxStrikes","swings","isHomeRun"],"originalMetaphor":"Baseball batting lineup and three strikes rule","targetMetaphor":"IRCTC Tatkal railway reservation queue and token counter","mismatchReason":"Baseball terminology (dugout, bullpen, strikes) is largely unfamiliar in India where cricket or railway reservation tokens serve as universal queuing models.","rationale":"Re-anchored to the familiar high-concurrency Tatkal ticket reservation and passenger queue. Clearly illustrates queuing, retry limits, and quota fulfillment.","culturalContext":"IRCTC queuing is universally understood by Indian software developers as the quintessential high-concurrency, high-throughput distributed system.","confidence":0.94,"alternatives":[{"id":"alt-1","metaphor":"IRCTC Tatkal railway reservation queue and token counter","rationale":"Re-anchored to the familiar high-concurrency Tatkal ticket reservation and passenger queue. Clearly illustrates queuing, retry limits, and quota fulfillment.","suggestedText":"Culturally adapted version using regional queuing mental model.","isNeutralTechnical":false},{"id":"alt-neutral","metaphor":"Neutral Technical (Zero-Metaphor Direct Explanation)","rationale":"Engineers who prefer direct, idiom-free technical explanations without sporting or cultural analogies.","suggestedText":"FIFO Asynchronous Work Queue with backpressure buffer, exponential timeout eviction, and worker throughput tracking.","isNeutralTechnical":true}]},"localizedText":"# एसिंक्रोनस इवेंट प्रोसेसिंग और बैकप्रेशर नियंत्रण","accepted":true},{"index":1,"type":"paragraph","startOffset":192,"endOffset":289,"originalText":"When building high-throughput microservices, incoming load frequently outpaces consumer capacity.","maskedText":"When building high-throughput microservices, incoming load frequently outpaces consumer capacity.","urlMap":{},"inlineCodeTokens":[],"intentCard":{"id":"intent-primary-1","sectionIndex":0,"codeBlockIndex":0,"associatedSymbols":["BattingLineupProcessor","BatterRequest","batterQueue","batterName","stepUpToPlate","pitchBall","strikeOut","retireBatter","homeRunCount","maxStrikes","swings","isHomeRun"],"originalMetaphor":"Baseball batting lineup and three strikes rule","targetMetaphor":"IRCTC Tatkal railway reservation queue and token counter","mismatchReason":"Baseball terminology (dugout, bullpen, strikes) is largely unfamiliar in India where cricket or railway reservation tokens serve as universal queuing models.","rationale":"Re-anchored to the familiar high-concurrency Tatkal ticket reservation and passenger queue. Clearly illustrates queuing, retry limits, and quota fulfillment.","culturalContext":"IRCTC queuing is universally understood by Indian software developers as the quintessential high-concurrency, high-throughput distributed system.","confidence":0.94,"alternatives":[{"id":"alt-1","metaphor":"IRCTC Tatkal railway reservation queue and token counter","rationale":"Re-anchored to the familiar high-concurrency Tatkal ticket reservation and passenger queue. Clearly illustrates queuing, retry limits, and quota fulfillment.","suggestedText":"Culturally adapted version using regional queuing mental model.","isNeutralTechnical":false},{"id":"alt-neutral","metaphor":"Neutral Technical (Zero-Metaphor Direct Explanation)","rationale":"Engineers who prefer direct, idiom-free technical explanations without sporting or cultural analogies.","suggestedText":"FIFO Asynchronous Work Queue with backpressure buffer, exponential timeout eviction, and worker throughput tracking.","isNeutralTechnical":true}]},"localizedText":"उच्च-थ्रूपुट माइक्रोसर्विसेज का निर्माण करते समय, अक्सर अनुरोध वर्कर थ्रेड्स की प्रसंस्करण गति से अधिक तेजी से आते हैं। बिना उचित थ्रॉटलिंग के अत्यधिक लोड पर सर्वर क्रैश हो सकता है।","accepted":true},{"index":2,"type":"paragraph","startOffset":318,"endOffset":383,"originalText":"Always monitor queue saturation metrics in production dashboards!","maskedText":"Always monitor queue saturation metrics in production dashboards!","urlMap":{},"inlineCodeTokens":[],"intentCard":{"id":"intent-primary-1","sectionIndex":0,"codeBlockIndex":0,"associatedSymbols":["BattingLineupProcessor","BatterRequest","batterQueue","batterName","stepUpToPlate","pitchBall","strikeOut","retireBatter","homeRunCount","maxStrikes","swings","isHomeRun"],"originalMetaphor":"Baseball batting lineup and three strikes rule","targetMetaphor":"IRCTC Tatkal railway reservation queue and token counter","mismatchReason":"Baseball terminology (dugout, bullpen, strikes) is largely unfamiliar in India where cricket or railway reservation tokens serve as universal queuing models.","rationale":"Re-anchored to the familiar high-concurrency Tatkal ticket reservation and passenger queue. Clearly illustrates queuing, retry limits, and quota fulfillment.","culturalContext":"IRCTC queuing is universally understood by Indian software developers as the quintessential high-concurrency, high-throughput distributed system.","confidence":0.94,"alternatives":[{"id":"alt-1","metaphor":"IRCTC Tatkal railway reservation queue and token counter","rationale":"Re-anchored to the familiar high-concurrency Tatkal ticket reservation and passenger queue. Clearly illustrates queuing, retry limits, and quota fulfillment.","suggestedText":"Culturally adapted version using regional queuing mental model.","isNeutralTechnical":false},{"id":"alt-neutral","metaphor":"Neutral Technical (Zero-Metaphor Direct Explanation)","rationale":"Engineers who prefer direct, idiom-free technical explanations without sporting or cultural analogies.","suggestedText":"FIFO Asynchronous Work Queue with backpressure buffer, exponential timeout eviction, and worker throughput tracking.","isNeutralTechnical":true}]},"localizedText":"Always monitor queue saturation metrics in production dashboards!","accepted":true},{"index":3,"type":"heading","startOffset":396,"endOffset":431,"originalText":"## The Batting Queue Implementation","maskedText":"## The Batting Queue Implementation","urlMap":{},"inlineCodeTokens":[],"intentCard":{"id":"intent-primary-1","sectionIndex":0,"codeBlockIndex":0,"associatedSymbols":["BattingLineupProcessor","BatterRequest","batterQueue","batterName","stepUpToPlate","pitchBall","strikeOut","retireBatter","homeRunCount","maxStrikes","swings","isHomeRun"],"originalMetaphor":"Baseball batting lineup and three strikes rule","targetMetaphor":"IRCTC Tatkal railway reservation queue and token counter","mismatchReason":"Baseball terminology (dugout, bullpen, strikes) is largely unfamiliar in India where cricket or railway reservation tokens serve as universal queuing models.","rationale":"Re-anchored to the familiar high-concurrency Tatkal ticket reservation and passenger queue. Clearly illustrates queuing, retry limits, and quota fulfillment.","culturalContext":"IRCTC queuing is universally understood by Indian software developers as the quintessential high-concurrency, high-throughput distributed system.","confidence":0.94,"alternatives":[{"id":"alt-1","metaphor":"IRCTC Tatkal railway reservation queue and token counter","rationale":"Re-anchored to the familiar high-concurrency Tatkal ticket reservation and passenger queue. Clearly illustrates queuing, retry limits, and quota fulfillment.","suggestedText":"Culturally adapted version using regional queuing mental model.","isNeutralTechnical":false},{"id":"alt-neutral","metaphor":"Neutral Technical (Zero-Metaphor Direct Explanation)","rationale":"Engineers who prefer direct, idiom-free technical explanations without sporting or cultural analogies.","suggestedText":"FIFO Asynchronous Work Queue with backpressure buffer, exponential timeout eviction, and worker throughput tracking.","isNeutralTechnical":true}]},"localizedText":"## तत्काल आरक्षण कतार का क्रियान्वयन","accepted":true},{"index":4,"type":"paragraph","startOffset":433,"endOffset":521,"originalText":"Think of an event queue like a baseball batting lineup where batters wait in the dugout.","maskedText":"Think of an event queue like a baseball batting lineup where batters wait in the dugout.","urlMap":{},"inlineCodeTokens":[],"intentCard":{"id":"intent-primary-1","sectionIndex":0,"codeBlockIndex":0,"associatedSymbols":["BattingLineupProcessor","BatterRequest","batterQueue","batterName","stepUpToPlate","pitchBall","strikeOut","retireBatter","homeRunCount","maxStrikes","swings","isHomeRun"],"originalMetaphor":"Baseball batting lineup and three strikes rule","targetMetaphor":"IRCTC Tatkal railway reservation queue and token counter","mismatchReason":"Baseball terminology (dugout, bullpen, strikes) is largely unfamiliar in India where cricket or railway reservation tokens serve as universal queuing models.","rationale":"Re-anchored to the familiar high-concurrency Tatkal ticket reservation and passenger queue. Clearly illustrates queuing, retry limits, and quota fulfillment.","culturalContext":"IRCTC queuing is universally understood by Indian software developers as the quintessential high-concurrency, high-throughput distributed system.","confidence":0.94,"alternatives":[{"id":"alt-1","metaphor":"IRCTC Tatkal railway reservation queue and token counter","rationale":"Re-anchored to the familiar high-concurrency Tatkal ticket reservation and passenger queue. Clearly illustrates queuing, retry limits, and quota fulfillment.","suggestedText":"Culturally adapted version using regional queuing mental model.","isNeutralTechnical":false},{"id":"alt-neutral","metaphor":"Neutral Technical (Zero-Metaphor Direct Explanation)","rationale":"Engineers who prefer direct, idiom-free technical explanations without sporting or cultural analogies.","suggestedText":"FIFO Asynchronous Work Queue with backpressure buffer, exponential timeout eviction, and worker throughput tracking.","isNeutralTechnical":true}]},"localizedText":"एक इवेंट क्यू को रेलवे स्टेशन के तत्काल आरक्षण काउंटर की तरह समझें। यात्री अपनी बारी आने तक कतार में प्रतीक्षा करते हैं। बुकिंग काउंटर एक समय में एक अनुरोध संसाधित करता है। यदि कोई अनुरोध समय सीमा पार कर जाता है, तो टिकट निरस्त कर दिया जाता है ताकि कतार आगे बढ़ सके।","accepted":true},{"index":5,"type":"paragraph","startOffset":792,"endOffset":849,"originalText":"Notice how our `batterQueue` keeps incoming jobs orderly.","maskedText":"Notice how our `batterQueue` keeps incoming jobs orderly.","urlMap":{},"inlineCodeTokens":["batterQueue"],"intentCard":{"id":"intent-primary-1","sectionIndex":0,"codeBlockIndex":0,"associatedSymbols":["BattingLineupProcessor","BatterRequest","batterQueue","batterName","stepUpToPlate","pitchBall","strikeOut","retireBatter","homeRunCount","maxStrikes","swings","isHomeRun"],"originalMetaphor":"Baseball batting lineup and three strikes rule","targetMetaphor":"IRCTC Tatkal railway reservation queue and token counter","mismatchReason":"Baseball terminology (dugout, bullpen, strikes) is largely unfamiliar in India where cricket or railway reservation tokens serve as universal queuing models.","rationale":"Re-anchored to the familiar high-concurrency Tatkal ticket reservation and passenger queue. Clearly illustrates queuing, retry limits, and quota fulfillment.","culturalContext":"IRCTC queuing is universally understood by Indian software developers as the quintessential high-concurrency, high-throughput distributed system.","confidence":0.94,"alternatives":[{"id":"alt-1","metaphor":"IRCTC Tatkal railway reservation queue and token counter","rationale":"Re-anchored to the familiar high-concurrency Tatkal ticket reservation and passenger queue. Clearly illustrates queuing, retry limits, and quota fulfillment.","suggestedText":"Culturally adapted version using regional queuing mental model.","isNeutralTechnical":false},{"id":"alt-neutral","metaphor":"Neutral Technical (Zero-Metaphor Direct Explanation)","rationale":"Engineers who prefer direct, idiom-free technical explanations without sporting or cultural analogies.","suggestedText":"FIFO Asynchronous Work Queue with backpressure buffer, exponential timeout eviction, and worker throughput tracking.","isNeutralTechnical":true}]},"localizedText":"ध्यान दें कि कैसे हमारी `bookingQueue` आने वाले कार्यों को व्यवस्थित रखती है। यदि सर्वर व्यस्त है, तो नए अनुरोध प्रतीक्षा करते हैं।","accepted":true},{"index":6,"type":"heading","startOffset":851,"endOffset":878,"originalText":"## Secondary Worker Routine","maskedText":"## Secondary Worker Routine","urlMap":{},"inlineCodeTokens":[],"intentCard":{"id":"intent-primary-1","sectionIndex":0,"codeBlockIndex":0,"associatedSymbols":["BattingLineupProcessor","BatterRequest","batterQueue","batterName","stepUpToPlate","pitchBall","strikeOut","retireBatter","homeRunCount","maxStrikes","swings","isHomeRun"],"originalMetaphor":"Baseball batting lineup and three strikes rule","targetMetaphor":"IRCTC Tatkal railway reservation queue and token counter","mismatchReason":"Baseball terminology (dugout, bullpen, strikes) is largely unfamiliar in India where cricket or railway reservation tokens serve as universal queuing models.","rationale":"Re-anchored to the familiar high-concurrency Tatkal ticket reservation and passenger queue. Clearly illustrates queuing, retry limits, and quota fulfillment.","culturalContext":"IRCTC queuing is universally understood by Indian software developers as the quintessential high-concurrency, high-throughput distributed system.","confidence":0.94,"alternatives":[{"id":"alt-1","metaphor":"IRCTC Tatkal railway reservation queue and token counter","rationale":"Re-anchored to the familiar high-concurrency Tatkal ticket reservation and passenger queue. Clearly illustrates queuing, retry limits, and quota fulfillment.","suggestedText":"Culturally adapted version using regional queuing mental model.","isNeutralTechnical":false},{"id":"alt-neutral","metaphor":"Neutral Technical (Zero-Metaphor Direct Explanation)","rationale":"Engineers who prefer direct, idiom-free technical explanations without sporting or cultural analogies.","suggestedText":"FIFO Asynchronous Work Queue with backpressure buffer, exponential timeout eviction, and worker throughput tracking.","isNeutralTechnical":true}]},"localizedText":"## Secondary Worker Routine","accepted":true},{"index":7,"type":"paragraph","startOffset":880,"endOffset":950,"originalText":"In addition to the main processor, worker routines handle persistence:","maskedText":"In addition to the main processor, worker routines handle persistence:","urlMap":{},"inlineCodeTokens":[],"intentCard":{"id":"intent-primary-1","sectionIndex":0,"codeBlockIndex":0,"associatedSymbols":["BattingLineupProcessor","BatterRequest","batterQueue","batterName","stepUpToPlate","pitchBall","strikeOut","retireBatter","homeRunCount","maxStrikes","swings","isHomeRun"],"originalMetaphor":"Baseball batting lineup and three strikes rule","targetMetaphor":"IRCTC Tatkal railway reservation queue and token counter","mismatchReason":"Baseball terminology (dugout, bullpen, strikes) is largely unfamiliar in India where cricket or railway reservation tokens serve as universal queuing models.","rationale":"Re-anchored to the familiar high-concurrency Tatkal ticket reservation and passenger queue. Clearly illustrates queuing, retry limits, and quota fulfillment.","culturalContext":"IRCTC queuing is universally understood by Indian software developers as the quintessential high-concurrency, high-throughput distributed system.","confidence":0.94,"alternatives":[{"id":"alt-1","metaphor":"IRCTC Tatkal railway reservation queue and token counter","rationale":"Re-anchored to the familiar high-concurrency Tatkal ticket reservation and passenger queue. Clearly illustrates queuing, retry limits, and quota fulfillment.","suggestedText":"Culturally adapted version using regional queuing mental model.","isNeutralTechnical":false},{"id":"alt-neutral","metaphor":"Neutral Technical (Zero-Metaphor Direct Explanation)","rationale":"Engineers who prefer direct, idiom-free technical explanations without sporting or cultural analogies.","suggestedText":"FIFO Asynchronous Work Queue with backpressure buffer, exponential timeout eviction, and worker throughput tracking.","isNeutralTechnical":true}]},"localizedText":"In addition to the main processor, worker routines handle persistence:","accepted":true},{"index":8,"type":"paragraph","startOffset":1071,"endOffset":1206,"originalText":"Check out our reference documentation at [MLB Rules](https://mlb.com/rules) and [Architecture Guide](https://example.com/architecture).","maskedText":"Check out our reference documentation at [MLB Rules](__URL_REF_0__) and [Architecture Guide](__URL_REF_1__).","urlMap":{"__URL_REF_0__":"https://mlb.com/rules","__URL_REF_1__":"https://example.com/architecture"},"inlineCodeTokens":[],"intentCard":{"id":"intent-primary-1","sectionIndex":0,"codeBlockIndex":0,"associatedSymbols":["BattingLineupProcessor","BatterRequest","batterQueue","batterName","stepUpToPlate","pitchBall","strikeOut","retireBatter","homeRunCount","maxStrikes","swings","isHomeRun"],"originalMetaphor":"Baseball batting lineup and three strikes rule","targetMetaphor":"IRCTC Tatkal railway reservation queue and token counter","mismatchReason":"Baseball terminology (dugout, bullpen, strikes) is largely unfamiliar in India where cricket or railway reservation tokens serve as universal queuing models.","rationale":"Re-anchored to the familiar high-concurrency Tatkal ticket reservation and passenger queue. Clearly illustrates queuing, retry limits, and quota fulfillment.","culturalContext":"IRCTC queuing is universally understood by Indian software developers as the quintessential high-concurrency, high-throughput distributed system.","confidence":0.94,"alternatives":[{"id":"alt-1","metaphor":"IRCTC Tatkal railway reservation queue and token counter","rationale":"Re-anchored to the familiar high-concurrency Tatkal ticket reservation and passenger queue. Clearly illustrates queuing, retry limits, and quota fulfillment.","suggestedText":"Culturally adapted version using regional queuing mental model.","isNeutralTechnical":false},{"id":"alt-neutral","metaphor":"Neutral Technical (Zero-Metaphor Direct Explanation)","rationale":"Engineers who prefer direct, idiom-free technical explanations without sporting or cultural analogies.","suggestedText":"FIFO Asynchronous Work Queue with backpressure buffer, exponential timeout eviction, and worker throughput tracking.","isNeutralTechnical":true}]},"localizedText":"Check out our reference documentation at [MLB Rules](https://mlb.com/rules) and [Architecture Guide](https://example.com/architecture).","accepted":true},{"index":9,"type":"blockquote","startOffset":1208,"endOffset":1278,"originalText":"> Long-lived worker queues must handle connection dropouts gracefully.","maskedText":"> Long-lived worker queues must handle connection dropouts gracefully.","urlMap":{},"inlineCodeTokens":[],"intentCard":{"id":"intent-primary-1","sectionIndex":0,"codeBlockIndex":0,"associatedSymbols":["BattingLineupProcessor","BatterRequest","batterQueue","batterName","stepUpToPlate","pitchBall","strikeOut","retireBatter","homeRunCount","maxStrikes","swings","isHomeRun"],"originalMetaphor":"Baseball batting lineup and three strikes rule","targetMetaphor":"IRCTC Tatkal railway reservation queue and token counter","mismatchReason":"Baseball terminology (dugout, bullpen, strikes) is largely unfamiliar in India where cricket or railway reservation tokens serve as universal queuing models.","rationale":"Re-anchored to the familiar high-concurrency Tatkal ticket reservation and passenger queue. Clearly illustrates queuing, retry limits, and quota fulfillment.","culturalContext":"IRCTC queuing is universally understood by Indian software developers as the quintessential high-concurrency, high-throughput distributed system.","confidence":0.94,"alternatives":[{"id":"alt-1","metaphor":"IRCTC Tatkal railway reservation queue and token counter","rationale":"Re-anchored to the familiar high-concurrency Tatkal ticket reservation and passenger queue. Clearly illustrates queuing, retry limits, and quota fulfillment.","suggestedText":"Culturally adapted version using regional queuing mental model.","isNeutralTechnical":false},{"id":"alt-neutral","metaphor":"Neutral Technical (Zero-Metaphor Direct Explanation)","rationale":"Engineers who prefer direct, idiom-free technical explanations without sporting or cultural analogies.","suggestedText":"FIFO Asynchronous Work Queue with backpressure buffer, exponential timeout eviction, and worker throughput tracking.","isNeutralTechnical":true}]},"localizedText":"> Long-lived worker queues must handle connection dropouts gracefully.","accepted":true}],"htmlViewerPath":"C:\\New folder\\fixtures\\complex-doc.hi-IN.diff.html","stats":{"metaphorsTranscreated":1,"codeIdentifiersAdapted":12,"codeBlocksValidated":2,"proseNodesTranscreated":10}};
+    let currentData = JSON.parse(JSON.stringify(INITIAL_DATA));
+    let selectedHunkIndex = 0;
+
+    function escapeHtml(text) {
+      if (!text) return "";
+      return text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+    }
+
+    function switchView(viewName) {
+      document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+      document.querySelectorAll(".view-pane").forEach(p => p.classList.remove("active"));
+
+      if (viewName === "split") {
+        document.querySelector(".tab-btn:nth-child(1)").classList.add("active");
+        document.getElementById("split-view").classList.add("active");
+      } else if (viewName === "diff") {
+        document.querySelector(".tab-btn:nth-child(2)").classList.add("active");
+        document.getElementById("diff-view").classList.add("active");
+      } else if (viewName === "rendered") {
+        document.querySelector(".tab-btn:nth-child(3)").classList.add("active");
+        document.getElementById("rendered-view").classList.add("active");
+        renderArticle();
+      }
+    }
+
+    function toggleTheme() {
+      const html = document.documentElement;
+      html.classList.toggle("light");
+      html.classList.toggle("dark");
+    }
+
+    function toggleDrawer() {
+      const drawer = document.getElementById("intent-drawer");
+      drawer.classList.toggle("open");
+    }
+
+    function renderSplitNodes() {
+      const origContainer = document.getElementById("original-nodes");
+      const transContainer = document.getElementById("transcreated-nodes");
+      origContainer.innerHTML = "";
+      transContainer.innerHTML = "";
+
+      currentData.proseNodes.forEach((node, idx) => {
+        // Original
+        const origDiv = document.createElement("div");
+        origDiv.className = "section-hunk";
+        origDiv.id = "orig-" + idx;
+        origDiv.innerHTML = '<div style="color: var(--text-muted); font-size: 11px; margin-bottom: 4px;">Hunk #' + (idx + 1) + ' (' + node.type + ')</div>' +
+          '<div style="white-space: pre-wrap;">' + escapeHtml(node.originalText) + '</div>';
+        origContainer.appendChild(origDiv);
+
+        // Transcreated
+        const transDiv = document.createElement("div");
+        transDiv.className = "section-hunk";
+        transDiv.id = "trans-" + idx;
+        const statusClass = node.accepted ? "status-accepted" : "status-rejected";
+
+        let intentBadge = "";
+        if (node.intentCard) {
+          intentBadge = '<div class="intent-tag" onclick="showIntentCard(' + idx + ')">' +
+            '<span>Intent: ' + escapeHtml(node.intentCard.originalMetaphor) + ' → ' + escapeHtml(node.intentCard.targetMetaphor) + '</span>' +
+          '</div>';
+        }
+
+        transDiv.innerHTML = intentBadge +
+          '<div style="white-space: pre-wrap;" class="' + statusClass + '">' +
+            escapeHtml(node.accepted ? node.localizedText : node.originalText) +
+          '</div>' +
+          '<div class="hunk-controls">' +
+            '<button class="hunk-btn" onclick="acceptHunk(' + idx + ')">Accept</button>' +
+            '<button class="hunk-btn" onclick="rejectHunk(' + idx + ')">Reject</button>' +
+            (node.intentCard ? '<button class="hunk-btn" onclick="showIntentCard(' + idx + ')">Alternatives</button>' : '') +
+          '</div>';
+        transContainer.appendChild(transDiv);
+      });
+
+      // Synchronize scroll
+      const origCol = document.getElementById("col-original");
+      const transCol = document.getElementById("col-transcreated");
+      let isSyncing = false;
+
+      origCol.onscroll = () => {
+        if (!isSyncing) {
+          isSyncing = true;
+          transCol.scrollTop = origCol.scrollTop;
+          isSyncing = false;
+        }
+      };
+      transCol.onscroll = () => {
+        if (!isSyncing) {
+          isSyncing = true;
+          origCol.scrollTop = transCol.scrollTop;
+          isSyncing = false;
+        }
+      };
+    }
+
+    function getActiveMarkdown() {
+      const replacements = [];
+      currentData.proseNodes.forEach(node => {
+        const text = node.accepted ? node.localizedText : node.originalText;
+        if (text !== node.originalText) {
+          replacements.push({ start: node.startOffset, end: node.endOffset, text: text });
+        }
+      });
+      currentData.codeBlocks.forEach(block => {
+        const code = block.transformedCode || block.originalCode;
+        if (code !== block.originalCode) {
+          const fence = ["```" + block.lang, code, "```"].join("\n");
+          replacements.push({ start: block.startOffset, end: block.endOffset, text: fence });
+        }
+      });
+      replacements.sort((a, b) => b.start - a.start);
+      let md = currentData.originalMarkdown;
+      for (const rep of replacements) {
+        md = md.slice(0, rep.start) + rep.text + md.slice(rep.end);
+      }
+      return md;
+    }
+
+    function acceptHunk(idx) {
+      currentData.proseNodes[idx].accepted = true;
+      currentData.transcreatedMarkdown = getActiveMarkdown();
+      renderSplitNodes();
+    }
+
+    function rejectHunk(idx) {
+      currentData.proseNodes[idx].accepted = false;
+      currentData.transcreatedMarkdown = getActiveMarkdown();
+      renderSplitNodes();
+    }
+
+    function showIntentCard(idx) {
+      const card = currentData.intentCards[0];
+      if (!card) return;
+
+      const body = document.getElementById("drawer-content");
+      body.innerHTML = 
+        '<div class="card-box">' +
+          '<h4>Original Metaphor</h4>' +
+          '<p><strong>' + escapeHtml(card.originalMetaphor) + '</strong></p>' +
+        '</div>' +
+        '<div class="card-box">' +
+          '<h4>Cultural Mismatch Reason</h4>' +
+          '<p>' + escapeHtml(card.mismatchReason) + '</p>' +
+        '</div>' +
+        '<div class="card-box">' +
+          '<h4>Target Adaptation</h4>' +
+          '<p><strong>' + escapeHtml(card.targetMetaphor) + '</strong></p>' +
+          '<p style="margin-top: 6px; color: var(--text-muted);">' + escapeHtml(card.rationale) + '</p>' +
+        '</div>' +
+        '<div class="card-box">' +
+          '<h4>Select Alternative / Neutral Fallback</h4>' +
+          card.alternatives.map((alt, aIdx) => 
+            '<div class="alt-option ' + (alt.isNeutralTechnical ? 'neutral-option' : '') + '" onclick="selectAlternative(' + idx + ', ' + aIdx + ')">' +
+              '<div style="font-weight: 600; font-size: 13px;">' + (alt.isNeutralTechnical ? '🛡️ ' : '🎯 ') + escapeHtml(alt.metaphor) + '</div>' +
+              '<div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">' + escapeHtml(alt.rationale) + '</div>' +
+            '</div>'
+          ).join('') +
+        '</div>';
+
+      document.getElementById("intent-drawer").classList.add("open");
+    }
+
+    function selectAlternative(proseIdx, altIdx) {
+      const card = currentData.intentCards[0];
+      const alt = card.alternatives[altIdx];
+      if (!alt) return;
+
+      if (alt.isNeutralTechnical) {
+        currentData.proseNodes[proseIdx].localizedText = alt.suggestedText;
+      } else {
+        currentData.proseNodes[proseIdx].localizedText = INITIAL_DATA.proseNodes[proseIdx].localizedText;
+      }
+      currentData.proseNodes[proseIdx].accepted = true;
+      currentData.transcreatedMarkdown = getActiveMarkdown();
+      renderSplitNodes();
+      document.getElementById("intent-drawer").classList.remove("open");
+    }
+
+    function renderArticle() {
+      const container = document.getElementById("rendered-content");
+      let html = "";
+
+      // Interleave prose and code blocks in strict document offset order
+      const allItems = [
+        ...currentData.proseNodes.map(p => ({ kind: "prose", offset: p.startOffset, data: p })),
+        ...currentData.codeBlocks.map(c => ({ kind: "code", offset: c.startOffset, data: c }))
+      ].sort((a, b) => a.offset - b.offset);
+
+      allItems.forEach(item => {
+        if (item.kind === "prose") {
+          const node = item.data;
+          const text = node.accepted ? node.localizedText : node.originalText;
+          let escaped = escapeHtml(text);
+          if (escaped.includes("\x60")) {
+            escaped = escaped.replace(new RegExp("\x60([^\x60]+)\x60", "g"), '<code style="background: var(--code-bg); padding: 2px 6px; border-radius: 4px; font-size: 12px; border: 1px solid var(--border-color);">$1</code>');
+          }
+          escaped = escaped.replace(/\[([^\]]+)\]\((https?:\/\/[^\s\)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" style="color: var(--accent); text-decoration: underline;">$1</a>');
+
+          if (text.startsWith("# ")) {
+            html += "<h1>" + escaped.slice(2) + "</h1>";
+          } else if (text.startsWith("## ")) {
+            html += "<h2>" + escaped.slice(3) + "</h2>";
+          } else if (text.startsWith("### ")) {
+            html += "<h3>" + escaped.slice(4) + "</h3>";
+          } else if (text.startsWith("> ")) {
+            html += '<blockquote style="border-left: 3px solid var(--accent); padding-left: 12px; margin: 12px 0; color: var(--text-muted);">' + escaped.slice(2) + '</blockquote>';
+          } else {
+            html += "<p>" + escaped + "</p>";
+          }
+        } else if (item.kind === "code") {
+          const block = item.data;
+          html += "<pre><code>" + escapeHtml(block.transformedCode || block.originalCode) + "</code></pre>";
+        }
+      });
+
+      container.innerHTML = html;
+    }
+
+    function exportMarkdown() {
+      const content = getActiveMarkdown();
+      currentData.transcreatedMarkdown = content;
+      const blob = new Blob([content], { type: "text/markdown;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      const cleanBase = currentData.filePath.split(/[\/\\]/).pop().replace(/\.md$/, "." + currentData.targetLocale + ".md");
+      a.download = cleanBase;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    async function saveToDisk() {
+      try {
+        const md = getActiveMarkdown();
+        currentData.transcreatedMarkdown = md;
+        const res = await fetch("/api/save", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            filePath: currentData.filePath,
+            targetLocale: currentData.targetLocale,
+            markdown: md
+          })
+        });
+        if (res.ok) {
+          alert("Successfully saved localized markdown to disk!");
+        } else {
+          alert("Error saving file to disk.");
+        }
+      } catch (err) {
+        alert("Server not reachable: " + err.message);
+      }
+    }
+
+    // Keyboard shortcuts
+    window.addEventListener("keydown", (e) => {
+      if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") return;
+      if (e.key === "j") {
+        selectedHunkIndex = Math.min(selectedHunkIndex + 1, currentData.proseNodes.length - 1);
+        const el = document.getElementById("trans-" + selectedHunkIndex);
+        if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+      } else if (e.key === "k") {
+        selectedHunkIndex = Math.max(selectedHunkIndex - 1, 0);
+        const el = document.getElementById("trans-" + selectedHunkIndex);
+        if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+      } else if (e.key === "a") {
+        acceptHunk(selectedHunkIndex);
+      } else if (e.key === "r") {
+        rejectHunk(selectedHunkIndex);
+      } else if (e.key === " ") {
+        e.preventDefault();
+        toggleDrawer();
+      }
+    });
+
+    // Initialize
+    renderSplitNodes();
+  </script>
+</body>
+</html>

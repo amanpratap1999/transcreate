@@ -75,5 +75,19 @@ describe("WorkstationBundler", () => {
 
     // Verify Export functionality
     expect(html).toContain("Export Markdown");
+
+    // Verify dynamic markdown synthesis function is embedded
+    expect(html).toContain("function getActiveMarkdown()");
+    expect(html).toContain("currentData.transcreatedMarkdown = getActiveMarkdown()");
+
+    // Verify interleaved document order rendering
+    expect(html).toContain("item.kind === \"prose\"");
+    expect(html).toContain("item.kind === \"code\"");
+  });
+
+  it("embeds saveToDisk functionality when serverPort is provided", () => {
+    const htmlWithServer = bundler.generateHtml(mockResult, 3000);
+    expect(htmlWithServer).toContain("Save to Disk");
+    expect(htmlWithServer).toContain("/api/save");
   });
 });

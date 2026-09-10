@@ -16,6 +16,8 @@ export function startReviewServer(options: ServerOptions): Promise<http.Server> 
       const isAllowedOrigin =
         !origin ||
         origin === "null" ||
+        origin === "http://localhost" ||
+        origin === "http://127.0.0.1" ||
         origin.startsWith("http://localhost:") ||
         origin.startsWith("http://127.0.0.1:");
 
@@ -43,7 +45,15 @@ export function startReviewServer(options: ServerOptions): Promise<http.Server> 
 
       if (req.method === "POST" && req.url === "/api/save") {
         let body = "";
+        let bodySize = 0;
+        const MAX_SIZE = 10 * 1024 * 1024; // 10 MB payload limit
+
         req.on("data", chunk => {
+          bodySize += chunk.length;
+          if (bodySize > MAX_SIZE) {
+            req.destroy();
+            return;
+          }
           body += chunk.toString();
         });
 
@@ -72,7 +82,7 @@ export function startReviewServer(options: ServerOptions): Promise<http.Server> 
       res.end("Not Found");
     });
 
-    server.listen(options.port, () => {
+    server.listen(options.port, "127.0.0.1", () => {
       resolve(server);
     });
 

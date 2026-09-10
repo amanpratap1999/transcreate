@@ -1,0 +1,50 @@
+---
+title: "Complex Distributed Architecture"
+author: "DevRel Team"
+tags: ["queues", "distributed"]
+---
+
+import { Callout } from "@/components/ui";
+
+# Advanced Distributed Processing Systems
+
+When building high-throughput microservices, incoming load frequently outpaces consumer capacity.
+
+<Callout type="warning">
+  Always monitor queue saturation metrics in production dashboards!
+</Callout>
+
+## The Batting Queue Implementation
+
+Think of an event queue like a baseball batting lineup where batters wait in the dugout.
+
+```typescript
+export interface BatterRequest {
+  id: string;
+  batterName: string;
+}
+
+export class BattingLineupProcessor {
+  private batterQueue: BatterRequest[] = [];
+  public stepUpToPlate(batter: BatterRequest): void {
+    this.batterQueue.push(batter);
+  }
+}
+```
+
+Notice how our `batterQueue` keeps incoming jobs orderly.
+
+## Secondary Worker Routine
+
+In addition to the main processor, worker routines handle persistence:
+
+```typescript
+function pitchBall(batter: any): boolean {
+  console.log("Pitching to: ", batter);
+  return true;
+}
+```
+
+Check out our reference documentation at [MLB Rules](https://mlb.com/rules) and [Architecture Guide](https://example.com/architecture).
+
+> Long-lived worker queues must handle connection dropouts gracefully.

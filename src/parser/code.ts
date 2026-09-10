@@ -169,6 +169,16 @@ export class BabelAdapter implements CodeAdapter {
             }
           }
 
+          // Guard against rewriting import/export module specifiers
+          if (
+            path.parentPath?.node?.type === "ImportDeclaration" ||
+            path.parentPath?.node?.type === "ExportNamedDeclaration" ||
+            path.parentPath?.node?.type === "ExportAllDeclaration"
+          ) {
+            this.traverse(path);
+            return;
+          }
+
           // Rewrite string literals in mock data
           if (node.type === "StringLiteral" && typeof node.value === "string") {
             for (const [orig, repl] of Object.entries(mockSubstitutions)) {

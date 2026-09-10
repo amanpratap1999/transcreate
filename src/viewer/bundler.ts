@@ -11,16 +11,16 @@ export class WorkstationBundler {
     const transcreatedText = result.transcreatedMarkdown;
     const lineDiff = diff.diffLines(originalText, transcreatedText);
 
-    const safeOriginal = JSON.stringify(originalText);
-    const safeTranscreated = JSON.stringify(transcreatedText);
-    const safeResult = JSON.stringify(result);
+    const safeOriginal = JSON.stringify(originalText).replace(/</g, "\\u003c");
+    const safeTranscreated = JSON.stringify(transcreatedText).replace(/</g, "\\u003c");
+    const safeResult = JSON.stringify(result).replace(/</g, "\\u003c");
 
     return `<!DOCTYPE html>
 <html lang="en" class="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Transcreate Review: ${result.filePath} (${result.targetLocale})</title>
+  <title>Transcreate Review: ${escapeHtml(result.filePath)} (${escapeHtml(result.targetLocale)})</title>
   <style>
     :root {
       --bg-base: #0f172a;
@@ -388,8 +388,8 @@ export class WorkstationBundler {
   <header>
     <div class="header-left">
       <span class="badge">Transcreate</span>
-      <h3 style="font-size: 14px; font-weight: 600;">${result.filePath}</h3>
-      <span class="badge-pill">Target: ${result.targetLocale}</span>
+      <h3 style="font-size: 14px; font-weight: 600;">${escapeHtml(result.filePath)}</h3>
+      <span class="badge-pill">Target: ${escapeHtml(result.targetLocale)}</span>
       <span class="badge-valid">AST Valid: 100%</span>
     </div>
 
@@ -583,13 +583,38 @@ export class WorkstationBundler {
       };
     }
 
+    function getActiveMarkdown() {
+      const replacements = [];
+      currentData.proseNodes.forEach(node => {
+        const text = node.accepted ? node.localizedText : node.originalText;
+        if (text !== node.originalText) {
+          replacements.push({ start: node.startOffset, end: node.endOffset, text: text });
+        }
+      });
+      currentData.codeBlocks.forEach(block => {
+        const code = block.transformedCode || block.originalCode;
+        if (code !== block.originalCode) {
+          const fence = ["\`\`\`" + block.lang, code, "\`\`\`"].join("\\n");
+          replacements.push({ start: block.startOffset, end: block.endOffset, text: fence });
+        }
+      });
+      replacements.sort((a, b) => b.start - a.start);
+      let md = currentData.originalMarkdown;
+      for (const rep of replacements) {
+        md = md.slice(0, rep.start) + rep.text + md.slice(rep.end);
+      }
+      return md;
+    }
+
     function acceptHunk(idx) {
       currentData.proseNodes[idx].accepted = true;
+      currentData.transcreatedMarkdown = getActiveMarkdown();
       renderSplitNodes();
     }
 
     function rejectHunk(idx) {
       currentData.proseNodes[idx].accepted = false;
+      currentData.transcreatedMarkdown = getActiveMarkdown();
       renderSplitNodes();
     }
 
@@ -632,7 +657,11 @@ export class WorkstationBundler {
 
       if (alt.isNeutralTechnical) {
         currentData.proseNodes[proseIdx].localizedText = alt.suggestedText;
+      } else {
+        currentData.proseNodes[proseIdx].localizedText = INITIAL_DATA.proseNodes[proseIdx].localizedText;
       }
+      currentData.proseNodes[proseIdx].accepted = true;
+      currentData.transcreatedMarkdown = getActiveMarkdown();
       renderSplitNodes();
       document.getElementById("intent-drawer").classList.remove("open");
     }
@@ -641,51 +670,66 @@ export class WorkstationBundler {
       const container = document.getElementById("rendered-content");
       let html = "";
 
-      // Render markdown representation
-      currentData.proseNodes.forEach(node => {
-        const text = node.accepted ? node.localizedText : node.originalText;
-        let escaped = escapeHtml(text);
-        if (escaped.includes("\\x60")) {
-          escaped = escaped.replace(new RegExp("\\x60([^\\x60]+)\\x60", "g"), '<code style="background: var(--code-bg); padding: 2px 6px; border-radius: 4px; font-size: 12px; border: 1px solid var(--border-color);">$1</code>');
-        }
-        if (text.startsWith("# ")) {
-          html += "<h1>" + escaped.slice(2) + "</h1>";
-        } else if (text.startsWith("## ")) {
-          html += "<h2>" + escaped.slice(3) + "</h2>";
-        } else {
-          html += "<p>" + escaped + "</p>";
+      // Interleave prose and code blocks in strict document offset order
+      const allItems = [
+        ...currentData.proseNodes.map(p => ({ kind: "prose", offset: p.startOffset, data: p })),
+        ...currentData.codeBlocks.map(c => ({ kind: "code", offset: c.startOffset, data: c }))
+      ].sort((a, b) => a.offset - b.offset);
+
+      allItems.forEach(item => {
+        if (item.kind === "prose") {
+          const node = item.data;
+          const text = node.accepted ? node.localizedText : node.originalText;
+          let escaped = escapeHtml(text);
+          if (escaped.includes("\\x60")) {
+            escaped = escaped.replace(new RegExp("\\x60([^\\x60]+)\\x60", "g"), '<code style="background: var(--code-bg); padding: 2px 6px; border-radius: 4px; font-size: 12px; border: 1px solid var(--border-color);">$1</code>');
+          }
+          escaped = escaped.replace(/\\[([^\\]]+)\\]\\((https?:\\/\\/[^\\s\\)]+)\\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" style="color: var(--accent); text-decoration: underline;">$1</a>');
+
+          if (text.startsWith("# ")) {
+            html += "<h1>" + escaped.slice(2) + "</h1>";
+          } else if (text.startsWith("## ")) {
+            html += "<h2>" + escaped.slice(3) + "</h2>";
+          } else if (text.startsWith("### ")) {
+            html += "<h3>" + escaped.slice(4) + "</h3>";
+          } else if (text.startsWith("> ")) {
+            html += '<blockquote style="border-left: 3px solid var(--accent); padding-left: 12px; margin: 12px 0; color: var(--text-muted);">' + escaped.slice(2) + '</blockquote>';
+          } else {
+            html += "<p>" + escaped + "</p>";
+          }
+        } else if (item.kind === "code") {
+          const block = item.data;
+          html += "<pre><code>" + escapeHtml(block.transformedCode || block.originalCode) + "</code></pre>";
         }
       });
-
-      // Code blocks
-      if (currentData.codeBlocks.length > 0) {
-        const block = currentData.codeBlocks[0];
-        html += "<pre><code>" + escapeHtml(block.transformedCode || block.originalCode) + "</code></pre>";
-      }
 
       container.innerHTML = html;
     }
 
     function exportMarkdown() {
-      const content = currentData.transcreatedMarkdown;
+      const content = getActiveMarkdown();
+      currentData.transcreatedMarkdown = content;
       const blob = new Blob([content], { type: "text/markdown;charset=utf-8" });
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = currentData.filePath.replace(/\\.md$/, "." + currentData.targetLocale + ".md");
+      const cleanBase = currentData.filePath.split(/[\\/\\\\]/).pop().replace(/\\.md$/, "." + currentData.targetLocale + ".md");
+      a.download = cleanBase;
       a.click();
       URL.revokeObjectURL(url);
     }
 
     async function saveToDisk() {
       try {
+        const md = getActiveMarkdown();
+        currentData.transcreatedMarkdown = md;
         const res = await fetch("/api/save", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             filePath: currentData.filePath,
             targetLocale: currentData.targetLocale,
-            markdown: currentData.transcreatedMarkdown
+            markdown: md
           })
         });
         if (res.ok) {

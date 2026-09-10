@@ -169,8 +169,11 @@ export class MarkdownParser {
     const visitChildren = (curr: MdastNode) => {
       if (curr.type === "link" || curr.type === "image") {
         if (curr.url && curr.position) {
-          const token = `__URL_REF_${urlCounter++}__`;
-          urlMap[token] = curr.url;
+          const existingToken = Object.entries(urlMap).find(([, u]) => u === curr.url)?.[0];
+          if (!existingToken) {
+            const token = `__URL_REF_${urlCounter++}__`;
+            urlMap[token] = curr.url;
+          }
         }
       }
 

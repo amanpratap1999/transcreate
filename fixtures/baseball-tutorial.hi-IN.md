@@ -21,7 +21,7 @@ Remember: Queues prevent your backend from being overwhelmed by spikes in networ
 
 ## तत्काल आरक्षण कतार का क्रियान्वयन
 
-In the following TypeScript snippet, we manage our incoming work requests using a `bookingQueue`. When a new request arrives, it steps into the batter's box. If processing times out before the play finishes, we call `expireBooking()` to remove the batter and log the error.
+निम्नलिखित TypeScript कोड में, हम `bookingQueue` का उपयोग करके आने वाले अनुरोधों का प्रबंधन करते हैं। यदि प्रसंस्करण समय समाप्त हो जाता है, तो हम `expireBooking()` को कॉल करते हैं।
 
 ```typescript
 interface PassengerRequest {
@@ -84,10 +84,10 @@ export class TatkalQueueProcessor {
 
 ## आरक्षण कतार की भीड़ और बैकप्रेशर प्रबंधन
 
-Notice how our `bookingQueue` keeps incoming jobs orderly. If the pitcher is delayed, new batters remain patiently in the dugout. However, if the bullpen fills up completely, we must apply backpressure or drop low-priority requests.
+ध्यान दें कि कैसे हमारी `bookingQueue` आने वाले कार्यों को व्यवस्थित रखती है। यदि सर्वर व्यस्त है, तो नए अनुरोध प्रतीक्षा करते हैं।
 
-For comprehensive league standards and queue management rules, refer to the [Official Baseball Rules](https://mlb.com/rules) and consult our system architecture docs at [Internal Microservices Guide](https://internal.example.com/docs/architecture).
+व्यापक कतार प्रबंधन नियमों के लिए, [Official Baseball Rules](https://mlb.com/rules) देखें और हमारी आंतरिक गाइड [Internal Microservices Guide](https://internal.example.com/docs/architecture) का संदर्भ लें।
 
 ![Batting Order Architecture](https://assets.example.com/diagrams/batting-order.png)
 
-Always ensure your `expireBooking()` handler properly cleans up allocated resources so memory leaks don't accumulate during long games.
+हमेशा सुनिश्चित करें कि आपका `expireBooking()` हैंडलर आवंटित संसाधनों को ठीक से साफ़ करता है ताकि मेमोरी लीक न हो।

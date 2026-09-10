@@ -61,4 +61,14 @@ describe("MarkdownParser", () => {
       "第1セクション（野球から新幹線への換骨奪胎）。\n\nभाग दो (रेलवे आरक्षण कतार)।\n\nAbschnitt Drei."
     );
   });
+
+  it("safely handles multiple duplicate URLs in the same paragraph without corrupting tokens", () => {
+    const md = "Visit [Link A](https://example.com) and also [Link B](https://example.com) for details.";
+    const analysis = parser.analyzeDocument(md);
+    const node = analysis.proseNodes[0];
+
+    expect(Object.keys(node.urlMap).length).toBe(1);
+    const unmasked = parser.unmaskUrls(node.maskedText, node.urlMap);
+    expect(unmasked).toBe(md);
+  });
 });

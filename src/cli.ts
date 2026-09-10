@@ -26,8 +26,14 @@ program
   .option("-g, --glossary <path>", "Path to project analogy memory glossary")
   .action(async (fileArg: string, options: any) => {
     const filePath = path.resolve(process.cwd(), fileArg);
-    if (!fs.existsSync(filePath)) {
-      console.error(`Error: File not found: ${filePath}`);
+    if (!fs.existsSync(filePath) || !fs.statSync(filePath).isFile()) {
+      console.error(`Error: File not found or not a regular file: ${filePath}`);
+      process.exit(1);
+    }
+
+    // Validate target locale to prevent path traversal attacks in output filenames
+    if (!/^[a-zA-Z0-9_-]+$/.test(options.to)) {
+      console.error(`Error: Invalid target locale: ${options.to}. Must contain only alphanumeric characters, dashes, or underscores.`);
       process.exit(1);
     }
 
@@ -88,6 +94,10 @@ program
     // Optionally start live review server & open browser
     if (options.open) {
       const port = parseInt(options.port, 10);
+      if (isNaN(port) || port <= 0 || port > 65535) {
+        console.error(`Error: Invalid port number: ${options.port}`);
+        process.exit(1);
+      }
       await startReviewServer({
         port,
         htmlContent: html,
@@ -97,8 +107,8 @@ program
       console.log(`🚀 Live Review Server running at ${url}`);
 
       // Open in default browser on Windows/mac/linux
-      const startCmd = process.platform === "win32" ? "start" : process.platform === "darwin" ? "open" : "xdg-open";
-      exec(`${startCmd} ${url}`);
+      const startCmd = process.platform === "win32" ? 'start ""' : process.platform === "darwin" ? "open" : "xdg-open";
+      exec(`${startCmd} "${url}"`);
     }
   });
 

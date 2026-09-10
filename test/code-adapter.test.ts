@@ -93,4 +93,22 @@ describe("BabelAdapter", () => {
     expect(invalidRes.valid).toBe(false);
     expect(invalidRes.error).toBeDefined();
   });
+
+  it("shields import and export module specifiers against mockSubstitutions", () => {
+    const code = `
+      import { Queue } from "baseball-queue-lib";
+      export * from "baseball-queue-lib";
+      const batter = "three strikes";
+    `;
+
+    const res = adapter.rewriteAst(
+      code,
+      {},
+      { "baseball-queue-lib": "train-queue-lib", "three strikes": "cancelled ticket" }
+    );
+
+    expect(res.code).toContain('import { Queue } from "baseball-queue-lib";');
+    expect(res.code).toContain('export * from "baseball-queue-lib";');
+    expect(res.code).toContain('const batter = "cancelled ticket";');
+  });
 });

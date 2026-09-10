@@ -49,5 +49,22 @@
       "swings": "retries",
       "isHomeRun": "isSuccess"
     }
+  },
+  "xx-YY": {
+    "primaryMetaphor": "Automated Parcel Sorting & Conveyor Dispatch",
+    "symbolTable": {
+      "BattingLineupProcessor": "BatchQueueProcessor",
+      "BatterRequest": "JobRequest",
+      "batterQueue": "jobQueue",
+      "batterName": "jobName",
+      "stepUpToPlate": "enqueueJob",
+      "pitchBall": "processJob",
+      "strikeOut": "abortJob",
+      "retireBatter": "dequeueJob",
+      "homeRunCount": "completedJobCount",
+      "maxStrikes": "maxRetries",
+      "swings": "retries",
+      "isHomeRun": "isSuccess"
+    }
   }
 }

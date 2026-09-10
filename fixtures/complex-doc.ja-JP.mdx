@@ -1,0 +1,50 @@
+---
+title: "Complex Distributed Architecture"
+author: "DevRel Team"
+tags: ["queues", "distributed"]
+---
+
+import { Callout } from "@/components/ui";
+
+# 非同期キュー処理とバックプレッシャーの制御
+
+高スループットなマイクロサービスを構築する際、リクエストの到着頻度がワーカーの処理能力を超えることがよくあります。適切なスロットリング（流量制限）を設けないと、高負荷時にサーバーがクラッシュしてしまいます。
+
+<Callout type="warning">
+  Always monitor queue saturation metrics in production dashboards!
+</Callout>
+
+## 新幹線発車管理キューの実装
+
+イベントキューを、新幹線のプラットフォームにおける乗車待機列として考えてみましょう。乗客は乗車アナウンスがあるまで待機列で整列し、列車が到着すると1名ずつ改札と乗車処理が進みます。処理のタイムアウト上限（リトライ制限）に達した場合、システムはチケット失効として処理し、後続の乗客へスムーズに席を譲ります。
+
+```typescript
+export interface PassengerRequest {
+  id: string;
+  passengerName: string;
+}
+
+export class TrainDispatchProcessor {
+  private passengerQueue: PassengerRequest[] = [];
+  public arriveAtPlatform(batter: PassengerRequest): void {
+    this.passengerQueue.push(batter);
+  }
+}
+```
+
+`passengerQueue` が到着したジョブを整然と管理している点に注目してください。列車の運行管理に遅延が生じた場合でも、乗客は待機列で待機します。ただし、待機列の容量が上限に達した場合は、バックプレッシャー（負荷調整）を発動するか、優先度の低いリクエストを適切にドロップする必要があります。
+
+## Secondary Worker Routine
+
+In addition to the main processor, worker routines handle persistence:
+
+```typescript
+function dispatchTrain(batter: any): boolean {
+  console.log("Pitching to: ", batter);
+  return true;
+}
+```
+
+Check out our reference documentation at [MLB Rules](https://mlb.com/rules) and [Architecture Guide](https://example.com/architecture).
+
+> Long-lived worker queues must handle connection dropouts gracefully.
