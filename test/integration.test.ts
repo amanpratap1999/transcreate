@@ -1,3 +1,4 @@
+import { PostgreSqlDatabaseClient } from "../src/saas/db/client.js";
 import { describe, it, expect } from "vitest";
 import * as fs from "node:fs";
 import * as path from "node:path";

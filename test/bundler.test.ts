@@ -1,3 +1,4 @@
+import { PostgreSqlDatabaseClient } from "../src/saas/db/client.js";
 import { describe, it, expect } from "vitest";
 import { WorkstationBundler } from "../src/viewer/bundler.js";
 import type { TranscreateResult } from "../types.js";

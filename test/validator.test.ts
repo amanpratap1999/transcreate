@@ -1,3 +1,4 @@
+import { PostgreSqlDatabaseClient } from "../src/saas/db/client.js";
 import { describe, it, expect } from "vitest";
 import { CodeValidator } from "../src/sandbox/validator.js";
 import type { CodeBlockSlice, ProseNodeSlice } from "../types.js";

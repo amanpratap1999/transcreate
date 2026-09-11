@@ -89,6 +89,9 @@ export interface TranscreateOptions {
   openBrowser?: boolean;
   serverPort?: number;
   glossaryPath?: string;
+  glossaryRepo?: any;
+  tenantContext?: { orgId: string; projectId?: string; userId?: string };
+  llmProvider?: any;
 }
 
 export interface TranscreateResult {

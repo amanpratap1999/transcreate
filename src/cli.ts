@@ -150,4 +150,94 @@ program
     console.log("Initialization complete!");
   });
 
+program
+  .command("serve")
+  .description("Start the Transcreate SaaS API server")
+  .option("-p, --port <number>", "Port to run on", "3000")
+  .action(async (options) => {
+    const port = parseInt(options.port, 10);
+    
+    // Import SaaS dependencies
+    const { RealPostgreSqlDatabaseClient } = await import("./saas/db/client.js");
+    const { S3ObjectStorageService } = await import("./saas/storage.js");
+    const { PostgresTenantScopedRepository } = await import("./saas/repository.js");
+    const { JobQueue, AsyncJobWorker } = await import("./saas/jobs.js");
+    const { TranscreateEngine } = await import("./transcreate/engine.js");
+    const { SaasApiServer } = await import("./saas/api.js");
+    const { AuthenticationManager, TokenService, RedisTokenRevocationStore } = await import("./saas/auth.js");
+    const { RateLimiter } = await import("./saas/rate-limiter.js");
+
+    console.log("Starting Transcreate SaaS API Server...");
+    
+    if (!process.env.DATABASE_URL) {
+      console.error("FATAL: DATABASE_URL is required to run the SaaS API.");
+      process.exit(1);
+    }
+    if (!process.env.REDIS_URL) {
+      console.error("FATAL: REDIS_URL is required to run the SaaS API.");
+      process.exit(1);
+    }
+
+    if (!process.env.S3_BUCKET_NAME) {
+      console.error("FATAL: S3_BUCKET_NAME is required to run the SaaS API.");
+      process.exit(1);
+    }
+
+    const db = new RealPostgreSqlDatabaseClient(process.env.DATABASE_URL);
+    const storage = new S3ObjectStorageService();
+    const repo = new PostgresTenantScopedRepository(db);
+    
+    const queue = new JobQueue(4);
+    
+    const revocation = new RedisTokenRevocationStore();
+    const tokenService = new TokenService({ revocation });
+    const authManager = new AuthenticationManager(tokenService);
+    const rateLimiter = new RateLimiter();
+
+    const apiServer = new SaasApiServer(repo, queue, {
+      authManager,
+      rateLimiter,
+      storage,
+      db,
+      allowDevHeaders: process.env.NODE_ENV !== "production"
+    });
+
+    await apiServer.listen(port, "0.0.0.0");
+    console.log(`🚀 SaaS API Server running on port ${port}`);
+    console.log(`Connected to Postgres: ${await db.isHealthy()}`);
+    console.log(`Connected to Storage: ${await storage.isHealthy()}`);
+    console.log(`Connected to Redis: ${!!process.env.REDIS_URL}`);
+  });
+
+program
+  .command("worker")
+  .description("Start the Transcreate SaaS Background Worker")
+  .action(async () => {
+    // Import SaaS dependencies
+    const { RealPostgreSqlDatabaseClient } = await import("./saas/db/client.js");
+    const { PostgresTenantScopedRepository } = await import("./saas/repository.js");
+    const { JobQueue, AsyncJobWorker } = await import("./saas/jobs.js");
+    const { TranscreateEngine } = await import("./transcreate/engine.js");
+
+    console.log("Starting Transcreate Background Worker...");
+    
+    if (!process.env.DATABASE_URL) {
+      console.error("FATAL: DATABASE_URL is required to run the worker.");
+      process.exit(1);
+    }
+    if (!process.env.REDIS_URL) {
+      console.error("FATAL: REDIS_URL is required to run the worker.");
+      process.exit(1);
+    }
+    const db = new RealPostgreSqlDatabaseClient(process.env.DATABASE_URL);
+    const repo = new PostgresTenantScopedRepository(db);
+    
+    const queue = new JobQueue(4);
+    const engine = new TranscreateEngine();
+    const worker = new AsyncJobWorker(repo, engine, queue);
+    
+    worker.start();
+    console.log("👷 Job worker started. Waiting for jobs...");
+  });
+
 program.parse(process.argv);

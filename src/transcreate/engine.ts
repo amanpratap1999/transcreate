@@ -233,14 +233,36 @@ export class TranscreateEngine {
   ): Promise<TranscreateResult> {
     const targetLocale = options.targetLocale || "ja-JP";
     const analysis = this.parser.analyzeDocument(sourceMarkdown);
-    const config = this.loadConfig();
-    const glossary = this.loadGlossary(options.glossaryPath || config.glossaryPath);
+
+    // Load glossary: Check if tenant-scoped repository is injected; otherwise fall back to local disk
+    let glossary: Record<string, any> = {};
+    if (options.glossaryRepo && options.tenantContext) {
+      const tenantGlossary = await options.glossaryRepo.getGlossary(
+        options.tenantContext.orgId,
+        options.tenantContext.projectId,
+        targetLocale
+      );
+      glossary[targetLocale] = tenantGlossary;
+    } else {
+      const config = this.loadConfig();
+      glossary = this.loadGlossary(options.glossaryPath || config.glossaryPath);
+    }
 
     // Pass 1: Analogy Discovery & Mapping
     let pass1: Pass1DiscoveryResult;
     const apiKey = process.env.OPENAI_API_KEY;
 
-    if (apiKey && options.model) {
+    if (options.llmProvider) {
+      const candidateSymbols = analysis.codeBlocks.flatMap(b => b.candidateSymbols.map(s => s.name));
+      const res = await options.llmProvider.generateStructured({
+        systemPrompt: `You are an expert DevRel Transcreation Strategist adapting technical documentation for ${targetLocale}.`,
+        userPrompt: `Source symbols: ${JSON.stringify(candidateSymbols)}\nDocument:\n${sourceMarkdown.slice(0, 3000)}`,
+        schema: Pass1DiscoverySchema,
+        model: options.model,
+        tenantContext: options.tenantContext
+      });
+      pass1 = res.data as Pass1DiscoveryResult;
+    } else if (apiKey && options.model) {
       pass1 = await this.runPass1WithLLM(sourceMarkdown, targetLocale, analysis, glossary, options.model);
     } else {
       pass1 = this.getBuiltinAdaptation(targetLocale, analysis);
@@ -248,7 +270,7 @@ export class TranscreateEngine {
 
     // Merge established glossary
     if (glossary[targetLocale]) {
-      pass1.symbolTable = { ...pass1.symbolTable, ...glossary[targetLocale].symbolTable };
+      pass1.symbolTable = { ...pass1.symbolTable, ...(glossary[targetLocale].symbolTable ?? {}) };
     }
 
     // Update analysis with pass1 findings
@@ -363,14 +385,26 @@ export class TranscreateEngine {
     const transcreatedMarkdown = this.parser.spliceDocument(sourceMarkdown, replacements);
 
     // Save updated glossary for multi-chapter memory
-    glossary[targetLocale] = {
-      primaryMetaphor: pass1.targetMetaphor,
-      symbolTable: {
-        ...(glossary[targetLocale]?.symbolTable ?? {}),
-        ...pass1.symbolTable
-      }
-    };
-    this.saveGlossary(glossary, options.glossaryPath || config.glossaryPath);
+    if (options.glossaryRepo && options.tenantContext) {
+      await options.glossaryRepo.saveGlossary(
+        options.tenantContext.orgId,
+        options.tenantContext.projectId,
+        targetLocale,
+        {
+          primaryMetaphor: pass1.targetMetaphor,
+          symbolTable: pass1.symbolTable
+        }
+      );
+    } else {
+      glossary[targetLocale] = {
+        primaryMetaphor: pass1.targetMetaphor,
+        symbolTable: {
+          ...(glossary[targetLocale]?.symbolTable ?? {}),
+          ...pass1.symbolTable
+        }
+      };
+      this.saveGlossary(glossary, options.glossaryPath);
+    }
 
     return {
       filePath: options.filePath,
